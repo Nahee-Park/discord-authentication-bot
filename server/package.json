@@ -1,15 +1,23 @@
 {
-  "name": "discord-authentication-bot-server",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "discord-authentication-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/app.ts",
+    "start:prod": "npx tsc && node dist/app.js",
+    "build": "npx tsc",
+    "dev": "node_modules/nodemon/bin/nodemon.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "typescript": "^4.6.4",
-    "vite": "^3.0.7"
+    "nodemon": "^2.0.19",
+    "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
   }
 }
