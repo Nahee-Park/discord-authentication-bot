@@ -1,34 +1,120 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import useThrottle from './hook/useThrottle';
+import { makeStars } from './utils/makeStars';
 
 function App() {
-  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const $sky = document.querySelector('.sky');
+    if ($sky) {
+      makeStars($sky);
+    }
+    window.addEventListener('resize', () => {
+      $sky && throttleMakeStars($sky);
+    });
+  }, []);
+
+  const throttleMakeStars = useThrottle(makeStars, 300);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <St.Root>
+      <St.Box>
+        <h1>NFT Holder Authentication</h1>
+        <St.WalletButton className="btn btn-warning mb-4">Connect Kaikas Wallet</St.WalletButton>
+        <St.DiscordButton className="btn btn-warning">Return to Discord</St.DiscordButton>
+      </St.Box>
+      <svg className="sky" />
+    </St.Root>
+  );
 }
 
-export default App
+export default App;
+
+const CommonButton = styled.button`
+  font-size: large;
+  background-color: #282727;
+  font-weight: 800;
+  border: none;
+  color: #f3f3f3;
+  font-family: 'Jura';
+  text-transform: none;
+
+  &:hover {
+    background-color: #474747;
+  }
+`;
+const St = {
+  Root: styled.main`
+    /* background: url('/public/ef_background.png') no-repeat;
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* animation */
+    width: 100vw;
+    height: 100vh;
+    /* background: linear-gradient(to right, #111, #0e0f19); */
+    overflow: hidden;
+    background: url('/ef_background.png') no-repeat;
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
+    /* 별을 감싼 부모 */
+    .sky {
+      width: 200vw;
+      height: 200vw;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: moveStar 240s linear infinite;
+      z-index: -1;
+    }
+
+    /* 별 */
+    .sky .star {
+      fill: #fff;
+      stroke: none;
+      stroke-width: 0;
+    }
+
+    /* 별 이동효과 */
+    @keyframes moveStar {
+      from {
+        transform: translate(-50%, -50%) rotate(0);
+      }
+
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+    h1 {
+      font-family: 'Jura';
+      font-style: normal;
+      font-weight: 800;
+      font-size: 32px;
+      line-height: 38px;
+      margin-bottom: 16px;
+    }
+  `,
+  WalletButton: styled(CommonButton)``,
+  DiscordButton: styled(CommonButton)``,
+  Box: styled.div`
+    /* background: #9c9c9c; */
+    background-color: rgba(136, 136, 136, 0.433); /* 50% 불투명도 */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+    border-radius: 16px;
+  `,
+};
