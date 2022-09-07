@@ -59,6 +59,10 @@ export const getUserData = async () => {
   console.log('>>받은 토큰', oauthData.access_token);
   console.log('>>타입', oauthData.token_type);
 
+  // const userData = await Api.post('/user-data', {
+  //   oauthData,
+  // });
+
   const userResult = await fetch('https://discord.com/api/users/@me', {
     headers: {
       authorization: `${oauthData.token_type} ${oauthData.access_token}`,
@@ -66,6 +70,7 @@ export const getUserData = async () => {
   });
 
   const userData = await userResult.json();
+
   console.log('userData', userData);
   return userData;
 };

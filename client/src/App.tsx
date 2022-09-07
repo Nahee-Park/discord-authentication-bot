@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Auth from './components/Auth';
 import useThrottle from './hook/useThrottle';
 import { makeStars } from './utils/makeStars';
-import { getUserData, getUserToken } from './utils/userAthentication';
 
 function App() {
   const [userId, setUserId] = useState('');
-  const getUserId = async () => {
-    const { id } = await getUserData();
-    console.log('>>chlwhwhlhwlwhlw', id);
-    setUserId(id);
-  };
+
   useEffect(() => {
     const $sky = document.querySelector('.sky');
     if ($sky) {
@@ -19,7 +15,6 @@ function App() {
     window.addEventListener('resize', () => {
       $sky && throttleMakeStars($sky);
     });
-    getUserId();
   }, []);
 
   const throttleMakeStars = useThrottle(makeStars, 300);
@@ -28,8 +23,9 @@ function App() {
     <St.Root>
       <St.Box>
         <h1>NFT Holder Authentication</h1>
-        <St.WalletButton className="btn btn-warning mb-4">Connect Kaikas Wallet</St.WalletButton>
-        <St.DiscordButton className="btn btn-warning">Return to Discord</St.DiscordButton>
+        <Auth setUserId={setUserId} />
+        {/* <St.WalletButton className="btn btn-warning mb-4">Connect Kaikas Wallet</St.WalletButton>
+        <St.DiscordButton className="btn btn-warning">Return to Discord</St.DiscordButton> */}
       </St.Box>
       <svg className="sky" />
     </St.Root>
