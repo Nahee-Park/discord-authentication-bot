@@ -12,7 +12,7 @@ export const GlobalStyle = createGlobalStyle`
     /* color-scheme: light dark; */
     color: rgba(255, 255, 255, 0.87);
 
-    background-color: #38393E;
+    /* background-color: #38393E; */
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;

@@ -2,8 +2,15 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import useThrottle from './hook/useThrottle';
 import { makeStars } from './utils/makeStars';
+import { getUserData, getUserToken } from './utils/userAthentication';
 
 function App() {
+  const [userId, setUserId] = useState('');
+  const getUserId = async () => {
+    const { id } = await getUserData();
+    console.log('>>chlwhwhlhwlwhlw', id);
+    setUserId(id);
+  };
   useEffect(() => {
     const $sky = document.querySelector('.sky');
     if ($sky) {
@@ -12,6 +19,7 @@ function App() {
     window.addEventListener('resize', () => {
       $sky && throttleMakeStars($sky);
     });
+    getUserId();
   }, []);
 
   const throttleMakeStars = useThrottle(makeStars, 300);
@@ -40,7 +48,7 @@ const CommonButton = styled.button`
   text-transform: none;
 
   &:hover {
-    background-color: #474747;
+    background-color: #242323;
   }
 `;
 const St = {
