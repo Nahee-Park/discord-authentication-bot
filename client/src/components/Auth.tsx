@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import ErrorBoundary from './common/ErrorBoundary';
 import { ClipLoader } from 'react-spinners';
 import { useQuery } from 'react-query';
@@ -6,43 +6,49 @@ import CommonError from './common/CommonError';
 import { getUserData } from '../utils/userAthentication';
 import AuthModal from './common/AuthModal';
 import styled from 'styled-components';
+import Result from './Result';
 
-interface AuthProps {
-  setUserId: React.Dispatch<React.SetStateAction<string>>;
-}
-
-function Auth({ setUserId }: AuthProps) {
+function Auth() {
   return (
     <ErrorBoundary renderFallback={({ error, reset }) => <AuthModal error={error} reset={reset} />}>
       <Suspense fallback={<ClipLoader size={50} color={'#ffffff'} />}>
-        <Resolved setUserId={setUserId} />
+        <Resolved />
       </Suspense>
     </ErrorBoundary>
   );
 }
 
-const Resolved = ({ setUserId }: AuthProps) => {
+const Resolved = () => {
+  const [address, setAddress] = useState<null | string>(null);
+  const [userId, setUserId] = useState('');
   const { data } = useQuery(['auth'], () => getUserData(), {
     suspense: true,
     retry: 0,
   });
 
   useEffect(() => {
-    data?.data && console.log(data?.data);
-  }, [data?.data]);
-  // const getUserId = async () => {
-  //   const { id } = await getUserData();
-  //   console.log('>>chlwhwhlhwlwhlw', id);
-  //   setUserId(id);
-  // };
+    data && setUserId(data.id);
+  }, [data]);
 
-  // useEffect(() => {
-  //   getUserId();
-  // }, []);
+  const handleWalletConnect = async () => {
+    const accounts = await window.klaytn.enable();
+    console.log('accounts', accounts);
+    setAddress(accounts[0]);
+    // 연결 후 api_wallet으로 보내서 nft수, address주소 확인
+    // 만약 다른 계좌를 원할 경우 지갑에서 선택 후 다시 connect시키도록
+    // 확인 후 디스코드로 연결해서 역할 부여 받는 api
+
+    //
+  };
+
   return (
     <>
-      <St.WalletButton className="btn btn-warning mb-4">Connect Kaikas Wallet</St.WalletButton>
-      <St.DiscordButton className="btn btn-warning">Return to Discord</St.DiscordButton>
+      <St.WalletButton className="btn btn-warning mb-4" onClick={handleWalletConnect}>
+        Connect Kaikas Wallet
+      </St.WalletButton>
+      {/* 결과 Result 컴포넌트로 따로 빼기 ->  */}
+      {address && <Result address={address} userId={userId} />}
+      {/* <St.DiscordButton className="btn btn-warning">Return to Discord</St.DiscordButton> */}
     </>
   );
 };
@@ -54,7 +60,7 @@ const CommonButton = styled.button`
   background-color: #282727;
   font-weight: 800;
   border: none;
-  color: #f3f3f3;
+  color: #ffe83c;
   font-family: 'Jura';
   text-transform: none;
 

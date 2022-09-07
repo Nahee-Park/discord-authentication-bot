@@ -7,61 +7,31 @@ const Api = axios.create({
   timeout: 3000,
 });
 
+let isGetToken = false;
+
 export const getUserToken = async () => {
+  if (isGetToken) {
+    return;
+  }
   const urlParams = new URLSearchParams(window.location.search);
-  // console.log('urlParams', urlParams);
   const code = urlParams.get('code');
-  // console.log('code', code);
   if (code === null) return;
-
-  // const CLIENT_ID = VITE_CLIENT_ID;
-  // const CLIENT_SECRET = VITE_CLIENT_SECRET;
-  // const REDIRECT_URL = 'http://127.0.0.1:5173';
-
-  // console.log('>>', CLIENT_ID);
-  // console.log('>>>>>>', CLIENT_SECRET);
-
-  // const bodyData = new URLSearchParams({
-  //   client_id: CLIENT_ID,
-  //   client_secret: CLIENT_SECRET,
-  //   code,
-  //   grant_type: 'authorization_code',
-  //   redirect_uri: REDIRECT_URL,
-  //   scope: 'identify',
-  // });
-  // const bodyData = new URLSearchParams();
-  // bodyData.append('client_id', CLIENT_ID);
-  // bodyData.append('client_secret', CLIENT_SECRET);
-  // bodyData.append('grant_type', 'authorization_code');
-  // bodyData.append('redirect_uri', REDIRECT_URL);
-  // bodyData.append('scope', 'identify');
-  // bodyData.append('code', code);
-
-  // console.log('>>bodyData', bodyData);
-
-  // const oauthResult = await Api.post('/token', {
-  //   body: bodyData,
-  //   headers: {
-  //     'Content-Type': 'application/x-www-form-urlencoded',
-  //   },
-  // });
 
   const oauthResult = await Api.post('/user-token', {
     code,
   });
 
-  // console.log('?>>oauthResult', oauthResult);
+  isGetToken = oauthResult?.data?.data;
   return oauthResult?.data?.data;
 };
 
 export const getUserData = async () => {
-  const oauthData = await getUserToken();
+  let oauthData = await getUserToken();
+  if (!oauthData) {
+    oauthData = isGetToken;
+  }
   console.log('>>받은 토큰', oauthData.access_token);
   console.log('>>타입', oauthData.token_type);
-
-  // const userData = await Api.post('/user-data', {
-  //   oauthData,
-  // });
 
   const userResult = await fetch('https://discord.com/api/users/@me', {
     headers: {
@@ -73,4 +43,15 @@ export const getUserData = async () => {
 
   console.log('userData', userData);
   return userData;
+};
+
+export const connectDiscord = async (address: string, userId: string) => {
+  const resultData = await Api.post('/api_wallet', {
+    address,
+    userId,
+  });
+
+  console.log('>>resultData', resultData);
+
+  return resultData;
 };

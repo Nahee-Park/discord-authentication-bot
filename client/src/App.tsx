@@ -5,8 +5,6 @@ import useThrottle from './hook/useThrottle';
 import { makeStars } from './utils/makeStars';
 
 function App() {
-  const [userId, setUserId] = useState('');
-
   useEffect(() => {
     const $sky = document.querySelector('.sky');
     if ($sky) {
@@ -23,7 +21,7 @@ function App() {
     <St.Root>
       <St.Box>
         <h1>NFT Holder Authentication</h1>
-        <Auth setUserId={setUserId} />
+        <Auth />
         {/* <St.WalletButton className="btn btn-warning mb-4">Connect Kaikas Wallet</St.WalletButton>
         <St.DiscordButton className="btn btn-warning">Return to Discord</St.DiscordButton> */}
       </St.Box>
