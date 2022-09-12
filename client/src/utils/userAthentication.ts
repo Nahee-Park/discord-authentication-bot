@@ -1,4 +1,3 @@
-const { VITE_CLIENT_SECRET, VITE_CLIENT_ID } = import.meta.env;
 import axios from 'axios';
 
 const Api = axios.create({

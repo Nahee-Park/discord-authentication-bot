@@ -15,7 +15,7 @@ export const makeStars = ($sky: Element) => {
   const _size = Math.floor(maxSize / 2) * 2;
 
   const htmlDummy = new Array(_size)
-    .fill()
+    .fill(0)
     .map((_, i) => {
       return `<circle class='star'
         cx=${getRandomX()}
