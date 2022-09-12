@@ -1,9 +1,14 @@
+import { updateRole } from './updateRole';
+const db = require('./db/db');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const Caver = require('caver-js');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { add_nft_role } = require('./bot');
+const schedule = require('node-schedule');
+const userDB = require('./db/user');
 dotenv.config();
 
 const REDIRECT_URL = 'https://main.dxl01j7nzkmcx.amplifyapp.com/';
@@ -39,9 +44,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/',(response)=>{
-  response.send('홀더 인증 서버입니다.')
-})
+app.get('/', (response) => {
+  response.send('홀더 인증 서버입니다.');
+});
 
 /**
  * @params code
@@ -150,6 +155,10 @@ app.post('/api_wallet', async (request, response) => {
   // 롤 부여 코드 추가
   const role = await add_nft_role(userId, count);
 
+  const client = await db.connect();
+  const user = await userDB.createUser(client, userId, addr, count, role);
+
+  console.log('>>user', user);
   return response.json({
     code: 200,
     message: 'ok',
@@ -159,3 +168,9 @@ app.post('/api_wallet', async (request, response) => {
 });
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
+
+const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
+  // 매일 낮 12시 정각마다 실행
+  console.log('낮 12시가 되어 role 재점검을 실시합니다');
+  updateRole();
+});
