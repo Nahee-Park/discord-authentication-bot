@@ -45,7 +45,7 @@ const Resolved = ({ address, userId }: ResultProps) => {
       <div>{data?.data?.count}</div>
       <h2 className="text-xl text-[#ffe83c] mb-2 mt-2">Role</h2>
       {/* <div>{data?.data?.role}</div> */}
-      <div>Holder</div>
+      <div>{data?.data?.role}</div>
       <St.DiscordButton className="btn btn-warning mt-4" onClick={handleClose}>
         Confirm
       </St.DiscordButton>

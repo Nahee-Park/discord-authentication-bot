@@ -19,8 +19,7 @@ function AuthModal({ error, reset }: CommonErrorProps) {
     });
 
   const handleClick = () => {
-    window.location.href =
-      'https://discord.com/api/oauth2/authorize?client_id=1014426671635501066&redirect_uri=https%3A%2F%2Fmain.dxl01j7nzkmcx.amplifyapp.com%2F&response_type=code&scope=identify';
+    window.location.href = import.meta.env.VITE_URL;
   };
 
   return (

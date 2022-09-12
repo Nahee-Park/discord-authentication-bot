@@ -27,3 +27,9 @@ declare global {
     klaytn: Klaytn;
   }
 }
+
+interface ImportMeta {
+  env: {
+    VITE_URL: string;
+  };
+}
