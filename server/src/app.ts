@@ -39,6 +39,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/',(response)=>{
+  response.send('홀더 인증 서버입니다.')
+})
+
 /**
  * @params code
  */
