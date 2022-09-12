@@ -1,3 +1,8 @@
 node_modules
 dist
 .DS_Store
+
+index.html
+src/bot.verify.js
+src/discord.js
+src/bot_new.js
