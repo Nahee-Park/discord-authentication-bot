@@ -25,7 +25,7 @@ function AuthModal({ error, reset }: CommonErrorProps) {
 
   return (
     <>
-      <div>인증 시간이 만료되었습니다</div>
+      <div>이미 인증이 완료된 유저입니다.</div>
       <CommonButton className="btn btn-warning mb-4 mt-4" onClick={handleClick}>
         창 닫기
       </CommonButton>
