@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Api = axios.create({
-  baseURL: 'http://localhost:53134',
+  baseURL: 'http://localhost:8000',
   // baseURL: 'https://discord.com/api/oauth2',
   timeout: 3000,
 });
