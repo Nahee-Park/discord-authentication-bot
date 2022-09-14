@@ -1,5 +1,4 @@
-import { ApplicationCommandPermissionType } from 'discord.js';
-import { add_nft_role, edit_nft_role, GUILD_ID } from './bot';
+import { edit_nft_role } from './bot';
 
 const db = require('./db/db');
 const userDB = require('./db/user');
@@ -9,6 +8,7 @@ const caver = new Caver(rpcURL);
 // @TODO Replace me
 const CONTRACT_ADDR = '0x898f2afc07924f5a4f9612449e4c4f8eca527515';
 
+console.log('>>이 파일에 들어왔니')
 export const updateRole = async () => {
   console.log('>>>>update role에 들어옴');
   const client = await db.connect();

@@ -37,11 +37,11 @@ export const client = new Client({
 
 let GlobalGuild;
 
-client.on('ready', () => {
-  GlobalGuild = client.guilds.cache.get(GUILD_ID);
-});
+// client.on('ready', () => {
+//   GlobalGuild = client.guilds.cache.get(GUILD_ID);
+// });
 
-client.on('guildMemberAdd', () => {
+client.on('ready', () => {
   const ch = client.channels.cache.get(CH_VERIFY);
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()

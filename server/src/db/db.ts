@@ -1,7 +1,7 @@
 const { Pool, Query } = require('pg');
 const dayjs = require('dayjs');
-const dotenv = require('dotenv');
-dotenv.config();
+const dotenv2 = require('dotenv');
+dotenv2.config();
 
 const dbConfig = {
   user: process.env.DB_USER,

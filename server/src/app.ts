@@ -1,8 +1,6 @@
 import { updateRole } from './updateRole';
 const db = require('./db/db');
-
 const express = require('express');
-const bodyParser = require('body-parser');
 const Caver = require('caver-js');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -12,7 +10,7 @@ const userDB = require('./db/user');
 dotenv.config();
 
 const REDIRECT_URL = 'https://www.endolphin.link/';
-const rpcURL = 'https://klaytn-mainnet-rpc.allthatnode.com:8551';
+const rpcURL = 'https://public-node-api.klaytnapi.com/v1/cypress';
 const port = process.env.PORT;
 const networkID = '8217';
 const caver = new Caver(rpcURL);
@@ -34,7 +32,8 @@ initContract();
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json()); 
+app.use(express.urlencoded( {extended : false } ));
 
 app.use(cors());
 app.use((req, res, next) => {
