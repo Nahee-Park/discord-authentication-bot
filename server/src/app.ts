@@ -12,7 +12,7 @@ const userDB = require('./db/user');
 dotenv.config();
 
 const REDIRECT_URL = 'https://www.endolphin.link/';
-const rpcURL = 'https://public-node-api.klaytnapi.com/v1/cypress';
+const rpcURL = 'https://klaytn-mainnet-rpc.allthatnode.com:8551';
 const port = process.env.PORT;
 const networkID = '8217';
 const caver = new Caver(rpcURL);
