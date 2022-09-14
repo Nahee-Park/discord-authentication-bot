@@ -30,10 +30,6 @@ const Resolved = ({ address, userId }: ResultProps) => {
     retry: 0,
   });
 
-  useEffect(() => {
-    console.log('>>>>>***data', data);
-  }, []);
-
   const handleClose = () => {
     window.close();
   };

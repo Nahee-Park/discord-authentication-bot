@@ -12,8 +12,6 @@ export interface CommonErrorProps {
 function CommonError({ error, reset }: CommonErrorProps) {
   const customId = error?.message;
 
-  console.log('>>', error);
-
   const notify = () =>
     toast.error(`${error?.message}`, {
       autoClose: 3000,

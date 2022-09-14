@@ -36,7 +36,6 @@ const Resolved = () => {
       return;
     }
     const accounts = await (window as any).klaytn.enable();
-    console.log('accounts', accounts);
 
     setAddress(accounts[0]);
     // 연결 후 api_wallet으로 보내서 nft수, address주소 확인

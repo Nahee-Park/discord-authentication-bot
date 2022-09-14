@@ -29,8 +29,6 @@ export const getUserData = async () => {
   if (!oauthData) {
     oauthData = isGetToken;
   }
-  console.log('>>받은 토큰', oauthData.access_token);
-  console.log('>>타입', oauthData.token_type);
 
   const userResult = await fetch('https://discord.com/api/users/@me', {
     headers: {
@@ -40,7 +38,6 @@ export const getUserData = async () => {
 
   const userData = await userResult.json();
 
-  console.log('userData', userData);
   if (userData.message === '401: Unauthorized') {
     alert('인증시간이 만료되었습니다. \n ✅홀더 인증 채널에서 다시 들어와주세요');
     window.location.href = 'https://discord.com/channels/992338931112755251/999599497162264677';
@@ -53,8 +50,6 @@ export const connectDiscord = async (address: string, userId: string) => {
     address,
     userId,
   });
-
-  console.log('>>resultData', resultData);
 
   return resultData;
 };
