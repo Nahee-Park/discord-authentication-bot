@@ -5,12 +5,14 @@ import React, { useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
 export interface CommonErrorProps {
-  error: Nullable<Error>;
-  reset: () => void;
+  error: Nullable<Error> | any;
+  reset?: () => void;
 }
 
 function CommonError({ error, reset }: CommonErrorProps) {
   const customId = error?.message;
+
+  console.log('>>', error);
 
   const notify = () =>
     toast.error(`${error?.message}`, {

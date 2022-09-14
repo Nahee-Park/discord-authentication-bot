@@ -41,6 +41,10 @@ export const getUserData = async () => {
   const userData = await userResult.json();
 
   console.log('userData', userData);
+  if (userData.message === '401: Unauthorized') {
+    alert('인증시간이 만료되었습니다. \n ✅홀더 인증 채널에서 다시 들어와주세요');
+    window.location.href = 'https://discord.com/channels/992338931112755251/999599497162264677';
+  }
   return userData;
 };
 

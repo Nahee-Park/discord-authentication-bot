@@ -31,8 +31,13 @@ const Resolved = () => {
   }, [data]);
 
   const handleWalletConnect = async () => {
+    if (!(window as any)?.klaytn) {
+      alert('카이카스 지갑을 먼저 설치해주세요.');
+      return;
+    }
     const accounts = await (window as any).klaytn.enable();
     console.log('accounts', accounts);
+
     setAddress(accounts[0]);
     // 연결 후 api_wallet으로 보내서 nft수, address주소 확인
     // 만약 다른 계좌를 원할 경우 지갑에서 선택 후 다시 connect시키도록
