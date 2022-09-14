@@ -1,5 +1,5 @@
 import { ApplicationCommandPermissionType } from 'discord.js';
-import { add_nft_role, edit_nft_role } from './bot';
+import { add_nft_role, edit_nft_role, GUILD_ID } from './bot';
 
 const db = require('./db/db');
 const userDB = require('./db/user');
@@ -53,39 +53,4 @@ export const updateRole = async () => {
       console.log('>=%%%%%%%%%%%%%%%returnValue', returnValue);
     }
   }
-
-  // await Promise.allSettled(promiseBalanceList).then((balance) => {
-  //   balance.map(async (result, idx) => {
-  //     if (result.status === 'fulfilled') {
-  //       if (Number(result.value) !== allUser[idx].count) {
-  //         const returnValue = await edit_nft_role(
-  //           client,
-  //           allUser[idx].userId,
-  //           allUser[idx].address,
-  //           Number(result.value),
-  //           allUser[idx].count,
-  //           allUser[idx].role,
-  //         );
-  //         console.log('**********returl', returnValue);
-  //         // updateResult.push({
-  //         //   userId: allUser[idx].userId,
-  //         //   address: allUser[idx].address,
-  //         //   count: Number(result.value),
-  //         // });
-  //         // userDB.createUser(
-  //         //   client,
-  //         //   allUser[idx].userId,
-  //         //   allUser[idx].address,
-  //         //   Number(result.value),
-  //         //   role,
-  //         // );
-  //       }
-  //     }
-  //   });
-  // });
-  // await Promise.allSettled(editListPromise).then((roles) => {
-  //   roles.map((result) => {
-  //     console.log('최종 result', result);
-  //   });
-  // });
 };

@@ -7,7 +7,7 @@ dotenv.config();
 
 const token = process.env.TOKEN;
 // @TODO 서버 아이디
-const GUILD_ID = '1016405367053373490';
+export const GUILD_ID = '1016405367053373490';
 
 // 롤을 부여할 테스트 멤버 아이디
 const MEMBER_ID = '753607553061093487';
@@ -20,12 +20,13 @@ const SUPER_ROLE_ID_NFT = '1016407416293834913';
 const WHALE_ROLE_ID_NFT = '1016407638516441120';
 
 const ROLE_TEXT = {
+  NO_ROLE: '홀더가 아닙니다.',
   ROLE_ID_NFT: 'Holder',
   SUPER_ROLE_ID_NFT: 'Super Holder',
   WHALE_ROLE_ID_NFT: 'Whale Holder',
 };
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -34,7 +35,11 @@ const client = new Client({
   ],
 });
 
-client.login(token);
+let GlobalGuild;
+
+client.on('ready', () => {
+  GlobalGuild = client.guilds.cache.get(GUILD_ID);
+});
 
 client.on('guildMemberAdd', () => {
   const ch = client.channels.cache.get(CH_VERIFY);
@@ -76,7 +81,6 @@ export const add_nft_role = async (user_id: string, count: number) => {
 
   const user = await client.users.fetch(user_id);
   const guild = client.guilds.cache.get(GUILD_ID);
-  console.log('>>guild', guild);
   let ROLE_ID = 'NO_ROLE';
   // NFT 개수가 0개인 경우
   if (count === 0) {
@@ -133,44 +137,49 @@ export const edit_nft_role = async (
   console.log('edit_nft_role', user_id);
 
   const user = await client.users.fetch(user_id);
-  const guild = client.guilds.cache.get(GUILD_ID);
-  console.log('>>user', user);
-  console.log('>>guld', guild);
+  GlobalGuild = await client.guilds.fetch(GUILD_ID);
+  if (!GlobalGuild) return console.log('guild not found :(');
   let ROLE_ID = 'NO_ROLE';
   let role;
 
   if (10 > count && count >= 1) {
-    role = guild.roles.cache.get(ROLE_ID_NFT);
+    role = GlobalGuild.roles.cache.get(ROLE_ID_NFT);
     ROLE_ID = ROLE_ID_NFT;
   } else if (100 > count && count >= 10) {
-    role = guild.roles.cache.get(SUPER_ROLE_ID_NFT);
+    role = GlobalGuild.roles.cache.get(SUPER_ROLE_ID_NFT);
     ROLE_ID = SUPER_ROLE_ID_NFT;
   } else if (count > 100) {
-    role = guild.roles.cache.get(WHALE_ROLE_ID_NFT);
+    role = GlobalGuild.roles.cache.get(WHALE_ROLE_ID_NFT);
     ROLE_ID = WHALE_ROLE_ID_NFT;
   }
 
-  const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
-  console.log('>>>>>>>update 완료!!', result);
   if (ROLE_ID !== previousRole) {
-    const member = await guild.members.fetch(user_id);
-    console.log('>>>>>>>&&&&', member);
-    // 기존 롤 지우고 새로운 롤 업데이트
-    member.roles.remove(previousRole);
-    member?.roles.add(role);
+    const member = await GlobalGuild.members.fetch(user_id);
+
+    // 지울 롤이 있으면 삭제
+    if (previousRole !== 'NO_RULE') member.roles.remove(previousRole);
+    // 추가할 롤이 있으면 추가
+    if (role) member?.roles.add(role);
+
+    const description = ROLE_ID === 'NO_ROLE' ? '홀더가 아닙니다' : `Role : ${ROLE_TEXT[ROLE_ID]}`;
 
     const userEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
       .setTitle('Role이 변경되었습니다.')
-      .setDescription(`Role : ${ROLE_TEXT[ROLE_ID]}`)
+      .setDescription(description)
       .addFields(
-        { name: '\u200B', value: '\u200B' },
-        { name: '기존 NFT 보유량', value: previousCount, inline: true },
-        { name: '현재 NFT 보유량', value: count, inline: true },
+        { name: '기존 NFT 보유량', value: previousCount.toString() },
+        { name: '현재 NFT 보유량', value: count.toString() },
       );
     user.send({ embeds: [userEmbed] }).then(() => {});
+    const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
+    console.log('>>>>>>>update 완료!!', result);
     return ROLE_ID;
   } else {
+    const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
+    console.log('>>>>>>>update 완료!!', result);
     return ROLE_ID;
   }
 };
+
+client.login(token);

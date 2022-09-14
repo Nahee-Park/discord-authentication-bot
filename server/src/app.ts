@@ -175,4 +175,3 @@ const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
   console.log('낮 12시가 되어 role 재점검을 실시합니다');
   updateRole();
 });
-updateRole();
