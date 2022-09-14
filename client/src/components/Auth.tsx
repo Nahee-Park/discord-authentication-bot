@@ -27,8 +27,8 @@ const Resolved = () => {
   });
 
   useEffect(() => {
-    data && setUserId(data.id);
-  }, [data]);
+    setUserId(data?.id);
+  }, []);
 
   const handleWalletConnect = async () => {
     if (!(window as any)?.klaytn) {
