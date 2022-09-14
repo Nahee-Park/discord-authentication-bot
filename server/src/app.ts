@@ -11,7 +11,7 @@ const schedule = require('node-schedule');
 const userDB = require('./db/user');
 dotenv.config();
 
-const REDIRECT_URL = 'https://main.dxl01j7nzkmcx.amplifyapp.com/';
+const REDIRECT_URL = 'https://www.endolphin.link/';
 const rpcURL = 'https://public-node-api.klaytnapi.com/v1/cypress';
 const port = process.env.PORT;
 const networkID = '8217';
@@ -154,6 +154,7 @@ app.post('/api_wallet', async (request, response) => {
 
   // 롤 부여 코드 추가
   const role = await add_nft_role(userId, count);
+  console.log('>>role', role);
 
   const client = await db.connect();
   const user = await userDB.createUser(client, userId, addr, count, role);
@@ -174,3 +175,4 @@ const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
   console.log('낮 12시가 되어 role 재점검을 실시합니다');
   updateRole();
 });
+updateRole();

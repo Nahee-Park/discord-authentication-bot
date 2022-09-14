@@ -12,7 +12,7 @@ const createUser = async (client, userId, address, count, role) => {
   );
 
   if (existingRows.length === 0) {
-    console.log('add new user')
+    console.log('add new user');
     const { rows } = await client.query(
       `
       INSERT INTO verify_user
@@ -24,7 +24,7 @@ const createUser = async (client, userId, address, count, role) => {
       [userId, address, count, role],
     );
     return convertSnakeToCamel.keysToCamel(rows);
-  }else {
+  } else {
     console.log('updating user');
     const { rows } = await client.query(
       `
@@ -37,9 +37,20 @@ const createUser = async (client, userId, address, count, role) => {
     );
     return convertSnakeToCamel.keysToCamel(rows);
   }
-  
+};
+
+const getAllUser = async (client) => {
+  const { rows } = await client.query(
+    `
+          SELECT *
+          FROM verify_user vu
+          WHERE vu.is_deleted= FALSE
+    `,
+  );
+  return convertSnakeToCamel.keysToCamel(rows);
 };
 
 module.exports = {
-  createUser
-}
+  createUser,
+  getAllUser,
+};

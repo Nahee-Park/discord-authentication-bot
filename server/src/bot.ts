@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 
 const dotenv = require('dotenv');
+const userDB = require('./db/user');
 
 dotenv.config();
 
@@ -18,6 +19,12 @@ const ROLE_ID_NFT = '1016407348157370419';
 const SUPER_ROLE_ID_NFT = '1016407416293834913';
 const WHALE_ROLE_ID_NFT = '1016407638516441120';
 
+const ROLE_TEXT = {
+  ROLE_ID_NFT: 'Holder',
+  SUPER_ROLE_ID_NFT: 'Super Holder',
+  WHALE_ROLE_ID_NFT: 'Whale Holder',
+};
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -29,7 +36,7 @@ const client = new Client({
 
 client.login(token);
 
-client.on('ready', () => {
+client.on('guildMemberAdd', () => {
   const ch = client.channels.cache.get(CH_VERIFY);
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
@@ -58,56 +65,112 @@ client.on('ready', () => {
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-// client.on('interactionCreate', async (interaction) => {
-//   if (!interaction.isChatInputCommand()) return;
-
-//   if (interaction.commandName === 'button') {
-//     const row = new ActionRowBuilder().addComponents(
-//       new ButtonBuilder()
-//         .setCustomId('primary')
-//         .setLabel('Click me!')
-//         .setStyle(ButtonStyle.Primary),
-//     );
-
-//     await interaction.reply({ content: 'I think you should,', components: [row] });
-//   }
-// });
-
+/**
+ * 유저에게 role 부여
+ * @param user_id
+ * @param count
+ * @returns
+ */
 export const add_nft_role = async (user_id: string, count: number) => {
   console.log('add_nft_role', user_id);
 
   const user = await client.users.fetch(user_id);
   const guild = client.guilds.cache.get(GUILD_ID);
-  let readableRole = 'member';
+  console.log('>>guild', guild);
+  let ROLE_ID = 'NO_ROLE';
+  // NFT 개수가 0개인 경우
   if (count === 0) {
     // send message
     const userEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
       .setTitle('앤돌핀 팩토리 NFT 홀더 인증 완료')
-      .setDescription(`Role : ${readableRole}`);
+      .setDescription('앤돌핀 팩토리 NFT 홀더가 아닙니다');
     user.send({ embeds: [userEmbed] }).then(() => {});
-    return;
+    return ROLE_ID;
   }
   let role = guild.roles.cache.get(ROLE_ID_NFT);
 
   if (10 > count && count >= 1) {
     role = guild.roles.cache.get(ROLE_ID_NFT);
-    readableRole = 'Holder';
+    ROLE_ID = ROLE_ID_NFT;
   } else if (100 > count && count >= 10) {
     role = guild.roles.cache.get(SUPER_ROLE_ID_NFT);
-    readableRole = 'Super Holder';
+    ROLE_ID = SUPER_ROLE_ID_NFT;
   } else if (count > 100) {
     role = guild.roles.cache.get(WHALE_ROLE_ID_NFT);
-    readableRole = 'Whale Holder';
+    ROLE_ID = WHALE_ROLE_ID_NFT;
   }
   const member = await guild.members.fetch(user_id);
   member.roles.add(role);
-  console.log('>>>>>>>>>>>', role);
+  console.log('New Member Role', role);
   const userEmbed = new EmbedBuilder()
     .setColor(0x0099ff)
     .setTitle('앤돌핀 팩토리 NFT 홀더 인증완료')
-    .setDescription(`Role : ${readableRole}`);
+    .setDescription(`Role : ${ROLE_TEXT[ROLE_ID]}`);
   user.send({ embeds: [userEmbed] }).then(() => {});
 
-  return readableRole;
+  return ROLE_ID;
+};
+
+/**
+ * 유저의 role 수정
+ * @param clientDb
+ * @param user_id
+ * @param address
+ * @param count
+ * @param previousCount
+ * @param previousRole
+ * @returns
+ */
+export const edit_nft_role = async (
+  clientDb,
+  user_id: string,
+  address: string,
+  count: number,
+  previousCount: number,
+  previousRole: string,
+) => {
+  console.log('edit_nft_role', user_id);
+
+  const user = await client.users.fetch(user_id);
+  const guild = client.guilds.cache.get(GUILD_ID);
+  console.log('>>user', user);
+  console.log('>>guld', guild);
+  let ROLE_ID = 'NO_ROLE';
+  let role;
+
+  if (10 > count && count >= 1) {
+    role = guild.roles.cache.get(ROLE_ID_NFT);
+    ROLE_ID = ROLE_ID_NFT;
+  } else if (100 > count && count >= 10) {
+    role = guild.roles.cache.get(SUPER_ROLE_ID_NFT);
+    ROLE_ID = SUPER_ROLE_ID_NFT;
+  } else if (count > 100) {
+    role = guild.roles.cache.get(WHALE_ROLE_ID_NFT);
+    ROLE_ID = WHALE_ROLE_ID_NFT;
+  }
+
+  const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
+  console.log('>>>>>>>update 완료!!', result);
+  if (ROLE_ID !== previousRole) {
+    const member = await guild.members.fetch(user_id);
+    console.log('>>>>>>>&&&&', member);
+    // 기존 롤 지우고 새로운 롤 업데이트
+    member.roles.remove(previousRole);
+    member?.roles.add(role);
+
+    const userEmbed = new EmbedBuilder()
+      .setColor(0x0099ff)
+      .setTitle('Role이 변경되었습니다.')
+      .setDescription(`Role : ${ROLE_TEXT[ROLE_ID]}`)
+      .addFields(
+        { name: '\u200B', value: '\u200B' },
+        { name: '기존 NFT 보유량', value: previousCount, inline: true },
+        { name: '현재 NFT 보유량', value: count, inline: true },
+      );
+    user.send({ embeds: [userEmbed] }).then(() => {});
+    return ROLE_ID;
+  } else {
+    return ROLE_ID;
+  }
 };
