@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import Auth from './components/Auth';
 import useThrottle from './hook/useThrottle';
@@ -47,14 +47,6 @@ const CommonButton = styled.button`
 `;
 const St = {
   Root: styled.main`
-    /* background: url('/public/ef_background.png') no-repeat;
-    opacity: 1;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position-x: center;
-    background-position-y: center; */
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -63,7 +55,6 @@ const St = {
     /* animation */
     width: 100vw;
     height: 100vh;
-    /* background: linear-gradient(to right, #111, #0e0f19); */
     overflow: hidden;
     background: url('/ef_background.png') no-repeat;
     background-size: cover;

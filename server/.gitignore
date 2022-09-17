@@ -6,3 +6,5 @@ index.html
 src/bot.verify.js
 src/discord.js
 src/bot_new.js
+
+.DS_Store
