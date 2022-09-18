@@ -59,7 +59,7 @@ client.on('ready', () => {
     .setDescription(
       'This is a read-only connection. Do not share your private keys. We will never ask for your seed phrase.',
     )
-    .setThumbnail('https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_image.png')
+    .setThumbnail('https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_image_white.png')
     // .setTimestamp()
     .setFooter({
       text: 'Endorphin Factory',
