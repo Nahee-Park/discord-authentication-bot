@@ -52,7 +52,7 @@ client.on('ready', () => {
   const exampleEmbed = new EmbedBuilder()
     .setColor(0x0099ff)
     .setAuthor({
-      name: '엔돌핀팩토리 홀더 인증 Bot',
+      name: '엔돌핀 팩토리 홀더 인증 봇',
       iconURL: 'https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_favicon.png',
     })
     .setTitle('Verify your assets')
@@ -90,7 +90,7 @@ export const add_nft_role = async (user_id: string, count: number) => {
       .setTitle('앤돌핀 팩토리 NFT 홀더 인증 완료')
       .setDescription('앤돌핀 팩토리 NFT 홀더가 아닙니다');
     user.send({ embeds: [userEmbed] }).then(() => {});
-    return ROLE_ID;
+    return ROLE_TEXT[ROLE_ID];
   }
   let role = guild.roles.cache.get(ROLE_ID_NFT);
 
@@ -113,7 +113,7 @@ export const add_nft_role = async (user_id: string, count: number) => {
     .setDescription(`Role : ${ROLE_TEXT[ROLE_ID]}`);
   user.send({ embeds: [userEmbed] }).then(() => {});
 
-  return ROLE_ID;
+  return ROLE_TEXT[ROLE_ID];
 };
 
 /**
@@ -174,11 +174,11 @@ export const edit_nft_role = async (
     user.send({ embeds: [userEmbed] }).then(() => {});
     const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
     console.log('>>>>>>>update 완료!!', result);
-    return ROLE_ID;
+    return ROLE_TEXT[ROLE_ID];
   } else {
     const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
     console.log('>>>>>>>update 완료!!', result);
-    return ROLE_ID;
+    return ROLE_TEXT[ROLE_ID];
   }
 };
 
