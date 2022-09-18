@@ -1,4 +1,4 @@
-const convertSnakeToCamel = require('../lib/convertSnakeToCamel');
+const convertSnakeToCamel = require('../utils/convertSnakeToCamel');
 
 const createUser = async (client, userId, address, count, role) => {
   const { rows: existingRows } = await client.query(

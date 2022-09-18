@@ -7,17 +7,23 @@ dotenv.config();
 
 const token = process.env.TOKEN;
 // @TODO 서버 아이디
-export const GUILD_ID = '1016405367053373490';
+// export const GUILD_ID = '1016405367053373490';
+export const GUILD_ID = '992338931112755251';
 
 // 롤을 부여할 테스트 멤버 아이디
 const MEMBER_ID = '753607553061093487';
 // @TODO 홀더 인증 채널 아이디
-const CH_VERIFY = '1016692813984964671';
+// const CH_VERIFY = '1016692813984964671';
+const CH_VERIFY = '999599497162264677';
+
 // @TODO ROLE ID
-const NO_ROLE = '1016409347221377045';
-const ROLE_ID_NFT = '1016407348157370419';
-const SUPER_ROLE_ID_NFT = '1016407416293834913';
-const WHALE_ROLE_ID_NFT = '1016407638516441120';
+// const NO_ROLE = '1016409347221377045';
+// const ROLE_ID_NFT = '1016407348157370419';
+// const SUPER_ROLE_ID_NFT = '1016407416293834913';
+// const WHALE_ROLE_ID_NFT = '1016407638516441120';
+const ROLE_ID_NFT = '1012608187398098986';
+const SUPER_ROLE_ID_NFT = '1015048331690508328';
+const WHALE_ROLE_ID_NFT = '1015048466931646545';
 
 const ROLE_TEXT = {
   NO_ROLE: '홀더가 아닙니다.',
@@ -37,10 +43,7 @@ export const client = new Client({
 
 let GlobalGuild;
 
-// client.on('ready', () => {
-//   GlobalGuild = client.guilds.cache.get(GUILD_ID);
-// });
-
+// @TODO 한 번 불러온 이후 서버 재시작할 땐 주석처리하기
 client.on('ready', () => {
   const ch = client.channels.cache.get(CH_VERIFY);
   const row = new ActionRowBuilder().addComponents(
@@ -77,7 +80,7 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
  * @returns
  */
 export const add_nft_role = async (user_id: string, count: number) => {
-  console.log('add_nft_role', user_id);
+  console.log('[log] add_nft_role user id', user_id);
 
   const user = await client.users.fetch(user_id);
   const guild = client.guilds.cache.get(GUILD_ID);
@@ -106,7 +109,7 @@ export const add_nft_role = async (user_id: string, count: number) => {
   }
   const member = await guild.members.fetch(user_id);
   member.roles.add(role);
-  console.log('New Member Role', role);
+  console.log('[log] add_nft_role new role', role);
   const userEmbed = new EmbedBuilder()
     .setColor(0x0099ff)
     .setTitle('앤돌핀 팩토리 NFT 홀더 인증완료')
@@ -134,7 +137,7 @@ export const edit_nft_role = async (
   previousCount: number,
   previousRole: string,
 ) => {
-  console.log('edit_nft_role', user_id);
+  console.log('[log] edit_nft_role user id', user_id);
 
   const user = await client.users.fetch(user_id);
   GlobalGuild = await client.guilds.fetch(GUILD_ID);
@@ -173,11 +176,11 @@ export const edit_nft_role = async (
       );
     user.send({ embeds: [userEmbed] }).then(() => {});
     const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
-    console.log('>>>>>>>update 완료!!', result);
+    console.log('[log] role update 완료', result);
     return ROLE_TEXT[ROLE_ID];
   } else {
     const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
-    console.log('>>>>>>>update 완료!!', result);
+    console.log('[log] role update는 아니지만 db update 완료', result);
     return ROLE_TEXT[ROLE_ID];
   }
 };

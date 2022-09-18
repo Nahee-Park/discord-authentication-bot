@@ -1,4 +1,4 @@
-import { edit_nft_role } from './bot';
+import { edit_nft_role } from '../bot';
 
 const db = require('./db/db');
 const userDB = require('./db/user');
@@ -8,9 +8,7 @@ const caver = new Caver(rpcURL);
 // @TODO Replace me
 const CONTRACT_ADDR = '0x898f2afc07924f5a4f9612449e4c4f8eca527515';
 
-console.log('>>이 파일에 들어왔니')
 export const updateRole = async () => {
-  console.log('>>>>update role에 들어옴');
   const client = await db.connect();
   const allUser = await userDB.getAllUser(client);
   const contract = await caver.kct.kip17.create(CONTRACT_ADDR);
@@ -19,24 +17,12 @@ export const updateRole = async () => {
   allUser.map((item) => {
     cleanData[item.userId] = item;
   });
-  // console.log('>>alluser', allUser);
-  // const promiseBalanceList = allUser.map((user) => {
-  //   return contract.balanceOf(user.address);
-  // });
-
-  // console.log(promiseBalanceList);
 
   const balanceObj = await allUser.reduce(async (promise, user) => {
-    // 누산값 받아오기 (2)
     let result = await promise;
-    // 누산값 변경 (3)
     result[user.userId] = await contract.balanceOf(user.address);
-    // 다음 Promise 리턴
     return result;
-  }, {}); // 초기값 (1)
-
-  console.log('66666666bala', balanceObj);
-  console.log('>>cleanData', cleanData);
+  }, {});
 
   for (const [key, value] of Object.entries(balanceObj)) {
     if (cleanData[key].count !== Number(value)) {
@@ -50,7 +36,7 @@ export const updateRole = async () => {
         cleanData[key].count,
         cleanData[key].role,
       );
-      console.log('>=%%%%%%%%%%%%%%%returnValue', returnValue);
+      console.log('[log] edit_nft_role return value', returnValue);
     }
   }
 };
