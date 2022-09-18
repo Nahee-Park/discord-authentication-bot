@@ -28,6 +28,7 @@ const Resolved = ({ address, userId }: ResultProps) => {
   const { data } = useQuery(['connect_discord'], () => connectDiscord(address, userId), {
     suspense: true,
     retry: 0,
+    refetchOnWindowFocus: false,
   });
 
   const handleClose = () => {
