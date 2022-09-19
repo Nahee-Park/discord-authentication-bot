@@ -25,7 +25,7 @@ const ROLE_ID_NFT = '1012608187398098986';
 const SUPER_ROLE_ID_NFT = '1015048331690508328';
 const WHALE_ROLE_ID_NFT = '1015048466931646545';
 
-const ROLE_TEXT = {
+export const ROLE_TEXT = {
   NO_ROLE: '홀더가 아닙니다.',
   ROLE_ID_NFT: 'Holder',
   SUPER_ROLE_ID_NFT: 'Super Holder',
@@ -45,30 +45,30 @@ let GlobalGuild;
 
 // @TODO 한 번 불러온 이후 서버 재시작할 땐 주석처리하기
 client.on('ready', () => {
-  const ch = client.channels.cache.get(CH_VERIFY);
-  const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setLabel('Verify your assets!')
-      .setStyle(ButtonStyle.Link)
-      .setURL(process.env.URL),
-  );
-  const exampleEmbed = new EmbedBuilder()
-    .setColor(0x0099ff)
-    .setAuthor({
-      name: '엔돌핀 팩토리 홀더 인증 봇',
-      iconURL: 'https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_favicon.png',
-    })
-    .setTitle('Verify your assets')
-    .setDescription(
-      'This is a read-only connection. Do not share your private keys. We will never ask for your seed phrase.',
-    )
-    .setThumbnail('https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_image_white.png')
-    // .setTimestamp()
-    .setFooter({
-      text: 'Endorphin Factory',
-      iconURL: 'https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_favicon.png',
-    });
-  ch.send({ embeds: [exampleEmbed], components: [row] }).then(() => {});
+  // const ch = client.channels.cache.get(CH_VERIFY);
+  // const row = new ActionRowBuilder().addComponents(
+  //   new ButtonBuilder()
+  //     .setLabel('Verify your assets!')
+  //     .setStyle(ButtonStyle.Link)
+  //     .setURL(process.env.URL),
+  // );
+  // const exampleEmbed = new EmbedBuilder()
+  //   .setColor(0x0099ff)
+  //   .setAuthor({
+  //     name: '엔돌핀 팩토리 홀더 인증 봇',
+  //     iconURL: 'https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_favicon.png',
+  //   })
+  //   .setTitle('Verify your assets')
+  //   .setDescription(
+  //     'This is a read-only connection. Do not share your private keys. We will never ask for your seed phrase.',
+  //   )
+  //   .setThumbnail('https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_image_white.png')
+  //   // .setTimestamp()
+  //   .setFooter({
+  //     text: 'Endorphin Factory',
+  //     iconURL: 'https://endorphin-factory.s3.ap-northeast-2.amazonaws.com/ef_favicon.png',
+  //   });
+  // ch.send({ embeds: [exampleEmbed], components: [row] }).then(() => {});
 });
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
@@ -93,7 +93,7 @@ export const add_nft_role = async (user_id: string, count: number) => {
       .setTitle('앤돌핀 팩토리 NFT 홀더 인증 완료')
       .setDescription('앤돌핀 팩토리 NFT 홀더가 아닙니다');
     user.send({ embeds: [userEmbed] }).then(() => {});
-    return ROLE_TEXT[ROLE_ID];
+    return ROLE_ID;
   }
   let role = guild.roles.cache.get(ROLE_ID_NFT);
 
@@ -116,7 +116,7 @@ export const add_nft_role = async (user_id: string, count: number) => {
     .setDescription(`Role : ${ROLE_TEXT[ROLE_ID]}`);
   user.send({ embeds: [userEmbed] }).then(() => {});
 
-  return ROLE_TEXT[ROLE_ID];
+  return ROLE_ID;
 };
 
 /**
@@ -177,11 +177,11 @@ export const edit_nft_role = async (
     user.send({ embeds: [userEmbed] }).then(() => {});
     const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
     console.log('[log] role update 완료', result);
-    return ROLE_TEXT[ROLE_ID];
+    return ROLE_ID;
   } else {
     const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
     console.log('[log] role update는 아니지만 db update 완료', result);
-    return ROLE_TEXT[ROLE_ID];
+    return ROLE_ID;
   }
 };
 

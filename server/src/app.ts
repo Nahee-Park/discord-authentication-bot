@@ -1,3 +1,4 @@
+import { ROLE_TEXT } from './bot';
 import { updateRole } from './utils/updateRole';
 const db = require('./db/db');
 const express = require('express');
@@ -150,7 +151,7 @@ app.post('/api_wallet', async (request, response) => {
     code: 200,
     message: 'ok',
     count,
-    role,
+    role: ROLE_TEXT[role],
   });
 });
 
