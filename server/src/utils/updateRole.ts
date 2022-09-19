@@ -1,7 +1,7 @@
 import { edit_nft_role } from '../bot';
 
-const db = require('./db/db');
-const userDB = require('./db/user');
+const db = require('../db/db');
+const userDB = require('../db/user');
 const Caver = require('caver-js');
 const rpcURL = 'https://public-node-api.klaytnapi.com/v1/cypress';
 const caver = new Caver(rpcURL);
