@@ -2,32 +2,46 @@ import { ROLE_TEXT } from './bot';
 import { updateRole } from './utils/updateRole';
 const db = require('./db/db');
 const express = require('express');
-const Caver = require('caver-js');
+// const Caver = require('caver-js');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { add_nft_role } = require('./bot');
 const schedule = require('node-schedule');
 const userDB = require('./db/user');
+const axios = require('axios');
+import { ethers } from 'ethers';
+
 dotenv.config();
 
-const REDIRECT_URL = 'https://www.endolphin.link/';
-const rpcURL = 'https://public-node-api.klaytnapi.com/v1/cypress';
-const port = process.env.PORT;
-const networkID = '8217';
-const caver = new Caver(rpcURL);
+// NFT 컨트랙트 인터페이스
+export const nftContractInterface = [
+  // NFT 보유량 확인하는 함수 (balanceOf)
+  'function balanceOf(address _owner) view returns (uint256)',
+];
+
+// const REDIRECT_URL = 'https://www.endolphin.link/';
+export const REDIRECT_URL = 'http://127.0.0.1:5173/';
+export const rpcURL = 'https://polygon-rpc.com';
+export const port = process.env.PORT;
+export const provider = new (ethers as any).providers.JsonRpcProvider(rpcURL);
 
 // @TODO Replace me
-const CONTRACT_ADDR = '0x898f2afc07924f5a4f9612449e4c4f8eca527515';
-let contract = null;
-// const WALLET_ADDR = '0x88d4e393a3d2e4cbb4e4192233c3bb59ed8de9cd';
+export const SPORTS_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
+export const DUMBELL_CONTRACT_ADDR = '0x898f2afc07924f5a4f9612449e4c4f8eca527515';
+let sportsContract,
+  dumbellContract = null;
+const TEST_WALLET_ADDR = '0x72CD037aC70e68ec3d46F035b657Cd39203FF5a0';
 async function initContract() {
-  contract = await caver.kct.kip17.create(CONTRACT_ADDR);
+  const sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
+  const dumbellContract = new ethers.Contract(
+    DUMBELL_CONTRACT_ADDR,
+    nftContractInterface,
+    provider,
+  );
   console.log('[log] initContract ok');
-  let ret;
-  ret = await contract.totalSupply();
-  console.log('[log] contract totalSupply', ret);
-  // ret = await contract.balanceOf(WALLET_ADDR);
-  // console.log('balanceOf', ret);
+
+  const testCount = await sportsContract.balanceOf(TEST_WALLET_ADDR);
+  console.log('balanceOf', testCount);
 }
 initContract();
 
@@ -65,27 +79,32 @@ app.post('/user-token', async (request, response) => {
       scope: 'identify',
     });
 
-    const oauthResult = await fetch('https://discord.com/api/oauth2/token', {
-      method: 'POST',
-      body: bodyData,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    }).catch((e) => {
-      throw new Error(e.message);
-    });
-
-    const oauthData = await oauthResult.json();
-    console.log('[log] 유저 oauth 인증 데이터', oauthData);
-
-    if (oauthData?.error) {
-      throw new Error(oauthData.data.data.error_description);
-    } else {
-      return response.json({
-        code: 200,
-        message: '유저 토큰 생성 성공',
-        data: oauthData,
+    try {
+      const responseResult = await axios.post('https://discord.com/api/oauth2/token', bodyData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
+
+      // 성공적으로 응답 받았을 때 처리
+      const oauthResult = responseResult.data;
+      console.log(oauthResult);
+      console.log(typeof oauthResult);
+
+      console.log('[log] 유저 oauth 인증 데이터', oauthResult);
+
+      if (oauthResult?.error) {
+        throw new Error(oauthResult.data.data.error_description);
+      } else {
+        return response.json({
+          code: 200,
+          message: '유저 토큰 생성 성공',
+          data: oauthResult,
+        });
+      }
+    } catch (error) {
+      // 에러 발생 시 처리
+      throw new Error(error.message);
     }
   } catch (e) {
     console.log('[log] 유저 토큰 생성 중 에러', e);
@@ -132,26 +151,44 @@ app.post('/user-data', async (request, response) => {
  */
 app.post('/api_wallet', async (request, response) => {
   console.log('[log] api_wallet api call', request.body);
+  // 지갑 주소를 받아서
   const addr = request.body.address;
   const userId = request.body.userId;
-  let ret;
-  ret = await contract.balanceOf(addr);
-  const count = Number(ret);
+
+  // nft 갯수를 가져옴
+  const sportsNftCount = await sportsContract.balanceOf(addr);
+  const dumbellNftCount = await dumbellContract.balanceOf(addr);
+
   console.log('[log] user id', userId);
-  console.log('[log] nft count', count);
+  console.log('[log] sportsNftCount count', sportsNftCount);
+  console.log('[log] dumbellNftCount count', dumbellNftCount);
 
   // 롤 부여 코드 추가
-  const role = await add_nft_role(userId, count);
-  console.log('[log] user new role', role);
+  const { sportsRole, dumbellRole } = await add_nft_role(
+    userId,
+    Number(sportsNftCount),
+    Number(dumbellNftCount),
+  );
+  console.log('[log] user new role', sportsRole, dumbellRole);
 
   const client = await db.connect();
-  const user = await userDB.createUser(client, userId, addr, count, role);
+  const user = await userDB.createUser(
+    client,
+    userId,
+    addr,
+    sportsNftCount,
+    dumbellNftCount,
+    sportsRole,
+    dumbellRole,
+  );
 
   return response.json({
     code: 200,
     message: 'ok',
-    count,
-    role: ROLE_TEXT[role],
+    sportsNftCount,
+    dumbellNftCount,
+    sportsRole: ROLE_TEXT[sportsRole],
+    dumbellRole: ROLE_TEXT[dumbellRole],
   });
 });
 
@@ -160,5 +197,5 @@ app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
 const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
   // 매일 낮 12시 정각마다 실행
   console.log('[log] 낮 12시가 되어 role 재점검을 실시합니다');
-  updateRole();
+  // updateRole();
 });

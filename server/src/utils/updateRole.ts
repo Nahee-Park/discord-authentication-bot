@@ -1,28 +1,40 @@
+import {
+  DUMBELL_CONTRACT_ADDR,
+  SPORTS_CONTRACT_ADDR,
+  nftContractInterface,
+  provider,
+} from '../app';
 import { edit_nft_role } from '../bot';
 
 const db = require('../db/db');
 const userDB = require('../db/user');
-const Caver = require('caver-js');
-const rpcURL = 'https://public-node-api.klaytnapi.com/v1/cypress';
-const caver = new Caver(rpcURL);
-// @TODO Replace me
-const CONTRACT_ADDR = '0x898f2afc07924f5a4f9612449e4c4f8eca527515';
+import { ethers } from 'ethers';
 
 export const updateRole = async () => {
   const client = await db.connect();
   const allUser = await userDB.getAllUser(client);
-  const contract = await caver.kct.kip17.create(CONTRACT_ADDR);
 
   const cleanData = {};
   allUser.map((item) => {
     cleanData[item.userId] = item;
   });
 
+  const sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
+  const dumbellContract = new ethers.Contract(
+    DUMBELL_CONTRACT_ADDR,
+    nftContractInterface,
+    provider,
+  );
   const balanceObj = await allUser.reduce(async (promise, user) => {
     let result = await promise;
-    result[user.userId] = await contract.balanceOf(user.address);
+    result[user.userId] = {
+      sports: await sportsContract.balanceOf(user.address),
+      dumbell: await dumbellContract.balanceOf(user.address),
+    };
     return result;
   }, {});
+
+  console.log(balanceObj);
 
   for (const [key, value] of Object.entries(balanceObj)) {
     if (cleanData[key].count !== Number(value)) {

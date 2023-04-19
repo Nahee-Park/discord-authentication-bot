@@ -1,6 +1,14 @@
 const convertSnakeToCamel = require('../utils/convertSnakeToCamel');
 
-const createUser = async (client, userId, address, count, role) => {
+const createUser = async (
+  client,
+  userId,
+  address,
+  sportsNftCount,
+  dumbellNftCount,
+  sportsRole,
+  dumbellRole,
+) => {
   const { rows: existingRows } = await client.query(
     `
           SELECT *
@@ -16,12 +24,12 @@ const createUser = async (client, userId, address, count, role) => {
     const { rows } = await client.query(
       `
       INSERT INTO verify_user
-      (user_id, address, count, role)
+      (user_id, address, sports_nft_count, sports_role, dumbell_nft_count, dumbell_role)
       VALUES
       ($1, $2, $3, $4)
       RETURNING user_id, address, count, role
                 `,
-      [userId, address, count, role],
+      [userId, address, sportsNftCount, sportsRole, dumbellNftCount, dumbellRole],
     );
     return convertSnakeToCamel.keysToCamel(rows);
   } else {
@@ -29,11 +37,11 @@ const createUser = async (client, userId, address, count, role) => {
     const { rows } = await client.query(
       `
       UPDATE verify_user
-      SET  address = $2, count = $3, role = $4
+      SET  address = $2, sports_nft_count = $3, sports_role = $4, dumbell_nft_count = $5, dumbell_role = $6
       WHERE user_id = $1
       RETURNING *
       `,
-      [userId, address, count, role],
+      [userId, address, sportsNftCount, sportsRole, dumbellNftCount, dumbellRole],
     );
     return convertSnakeToCamel.keysToCamel(rows);
   }
