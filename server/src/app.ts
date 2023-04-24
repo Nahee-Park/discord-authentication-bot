@@ -27,13 +27,13 @@ export const provider = new (ethers as any).providers.JsonRpcProvider(rpcURL);
 
 // @TODO Replace me
 export const SPORTS_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
-export const DUMBELL_CONTRACT_ADDR = '0x898f2afc07924f5a4f9612449e4c4f8eca527515';
+export const DUMBELL_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
 let sportsContract,
   dumbellContract = null;
 const TEST_WALLET_ADDR = '0x72CD037aC70e68ec3d46F035b657Cd39203FF5a0';
 async function initContract() {
-  const sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
-  const dumbellContract = new ethers.Contract(
+  sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
+  dumbellContract = new ethers.Contract(
     DUMBELL_CONTRACT_ADDR,
     nftContractInterface,
     provider,
@@ -155,9 +155,12 @@ app.post('/api_wallet', async (request, response) => {
   const addr = request.body.address;
   const userId = request.body.userId;
 
+  console.log('sportsContract', sportsContract);
+
   // nft 갯수를 가져옴
-  const sportsNftCount = await sportsContract.balanceOf(addr);
-  const dumbellNftCount = await dumbellContract.balanceOf(addr);
+  const sportsNftCount = await sportsContract?.balanceOf(addr);
+  const dumbellNftCount = await dumbellContract?.balanceOf(addr);
+
 
   console.log('[log] user id', userId);
   console.log('[log] sportsNftCount count', sportsNftCount);
@@ -176,8 +179,8 @@ app.post('/api_wallet', async (request, response) => {
     client,
     userId,
     addr,
-    sportsNftCount,
-    dumbellNftCount,
+    Number(sportsNftCount),
+    Number(dumbellNftCount),
     sportsRole,
     dumbellRole,
   );
@@ -185,8 +188,8 @@ app.post('/api_wallet', async (request, response) => {
   return response.json({
     code: 200,
     message: 'ok',
-    sportsNftCount,
-    dumbellNftCount,
+    sportsNftCount : Number(sportsNftCount),
+    dumbellNftCount : Number(dumbellNftCount),
     sportsRole: ROLE_TEXT[sportsRole],
     dumbellRole: ROLE_TEXT[dumbellRole],
   });
@@ -197,5 +200,5 @@ app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
 const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
   // 매일 낮 12시 정각마다 실행
   console.log('[log] 낮 12시가 되어 role 재점검을 실시합니다');
-  // updateRole();
+  updateRole();
 });

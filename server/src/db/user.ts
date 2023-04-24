@@ -26,8 +26,8 @@ const createUser = async (
       INSERT INTO verify_user
       (user_id, address, sports_nft_count, sports_role, dumbell_nft_count, dumbell_role)
       VALUES
-      ($1, $2, $3, $4)
-      RETURNING user_id, address, count, role
+      ($1, $2, $3, $4, $5, $6)
+      RETURNING user_id, address, sports_nft_count, sports_role, dumbell_nft_count, dumbell_role
                 `,
       [userId, address, sportsNftCount, sportsRole, dumbellNftCount, dumbellRole],
     );

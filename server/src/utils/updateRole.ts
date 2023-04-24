@@ -34,19 +34,22 @@ export const updateRole = async () => {
     return result;
   }, {});
 
-  console.log(balanceObj);
+  console.log('[log] update role balanceObj>>>', balanceObj);
 
   for (const [key, value] of Object.entries(balanceObj)) {
     if (cleanData[key].count !== Number(value)) {
-      console.log('cleanData[key]', cleanData[key]);
-      console.log('value', value);
+      console.log('[log] update role  cleanData[key]', cleanData[key]);
+      console.log('[log] update role  value', value);
       const returnValue = await edit_nft_role(
         client,
         cleanData[key].userId,
         cleanData[key].address,
-        Number(value),
-        cleanData[key].count,
-        cleanData[key].role,
+        cleanData[key].sports,
+        cleanData[key].sportsNftCount,
+        cleanData[key].sportsRole,
+        cleanData[key].dumbell,
+        cleanData[key].dumbellNftCount,
+        cleanData[key].dumbellRole,
       );
       console.log('[log] edit_nft_role return value', returnValue);
     }

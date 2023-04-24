@@ -18,15 +18,6 @@ const MEMBER_ID = '753607553061093487';
 // const CH_VERIFY = '1016692813984964671';
 const CH_VERIFY = '1096005938940481631';
 
-// @TODO ROLE ID
-// const NO_ROLE = '1016409347221377045';
-// const ROLE_ID_NFT = '1016407348157370419';
-// const SUPER_ROLE_ID_NFT = '1016407416293834913';
-// const WHALE_ROLE_ID_NFT = '1016407638516441120';
-// const ROLE_ID_NFT = '1012608187398098986';
-// const SUPER_ROLE_ID_NFT = '1015048331690508328';
-// const WHALE_ROLE_ID_NFT = '1015048466931646545';
-
 // NEW ROLE ID
 const SPORTS_FIGURE_ROLE_ID = '1096009423660515429';
 const SUPER_SPORTS_FIGURE_ROLE_ID = '1096257012582588436';
@@ -43,6 +34,7 @@ export const ROLE_TEXT = {
   // SUPER_ROLE_ID_NFT: 'Super Holder',
   // WHALE_ROLE_ID_NFT: 'Whale Holder',
 };
+export const DIVIDE_NUMBER = 30;
 
 export const client = new Client({
   intents: [
@@ -118,10 +110,10 @@ export const add_nft_role = async (
       // 스포츠 피규어 홀더에 대한 롤 부여
       let role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
 
-      if (30 > sportsNftCount && sportsNftCount >= 1) {
+      if (DIVIDE_NUMBER > sportsNftCount && sportsNftCount >= 1) {
         role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
         ROLE_ID = SPORTS_FIGURE_ROLE_ID;
-      } else if (sportsNftCount >= 30) {
+      } else if (sportsNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
         ROLE_ID = SUPER_SPORTS_FIGURE_ROLE_ID;
       }
@@ -140,10 +132,10 @@ export const add_nft_role = async (
     case 'DUMBBELL_FIGURE_HOLDER':
       // 덤벨 홀더에 대한 롤 부여
       role = guild.roles.cache.get(DUMBELL_ROLE_ID);
-      if (30 > dumbellNftCount && dumbellNftCount >= 1) {
+      if (DIVIDE_NUMBER > dumbellNftCount && dumbellNftCount >= 1) {
         role = guild.roles.cache.get(DUMBELL_ROLE_ID);
         ROLE_ID = DUMBELL_ROLE_ID;
-      } else if (dumbellNftCount >= 30) {
+      } else if (dumbellNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_DUMBELL_ROLE_ID);
         ROLE_ID = SUPER_DUMBELL_ROLE_ID;
       }
@@ -160,20 +152,20 @@ export const add_nft_role = async (
     default:
       let sportsRole = SPORTS_FIGURE_ROLE_ID;
       let dumbellRole = DUMBELL_ROLE_ID;
-      if (30 > sportsNftCount && sportsNftCount >= 1) {
+      if (DIVIDE_NUMBER > sportsNftCount && sportsNftCount >= 1) {
         role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
         sportsRole = SPORTS_FIGURE_ROLE_ID;
-      } else if (sportsNftCount >= 30) {
+      } else if (sportsNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
         sportsRole = SUPER_SPORTS_FIGURE_ROLE_ID;
       }
       member = await guild.members.fetch(user_id);
       member.roles.add(role);
 
-      if (30 > dumbellNftCount && dumbellNftCount >= 1) {
+      if (DIVIDE_NUMBER > dumbellNftCount && dumbellNftCount >= 1) {
         role = guild.roles.cache.get(DUMBELL_ROLE_ID);
         dumbellRole = DUMBELL_ROLE_ID;
-      } else if (dumbellNftCount >= 30) {
+      } else if (dumbellNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_DUMBELL_ROLE_ID);
         dumbellRole = SUPER_DUMBELL_ROLE_ID;
       }
@@ -189,70 +181,77 @@ export const add_nft_role = async (
   }
 };
 
-/**
- * 유저의 role 수정
- * @param clientDb
- * @param user_id
- * @param address
- * @param count
- * @param previousCount
- * @param previousRole
- * @returns
- */
 export const edit_nft_role = async (
   clientDb,
   user_id: string,
   address: string,
-  count: number,
-  previousCount: number,
-  previousRole: string,
+  sportsCount: number,
+  sportsPreviousCount: number,
+  dumbellCount: number,
+  dumbellPreviousCount: number,
+  sportsPreviousRole: string,
+  dumbellPreviousRole: string,
 ) => {
   console.log('[log] edit_nft_role user id', user_id);
 
   const user = await client.users.fetch(user_id);
   GlobalGuild = await client.guilds.fetch(GUILD_ID);
   if (!GlobalGuild) return console.log('guild not found :(');
-  let ROLE_ID = 'NO_ROLE';
-  let role;
+  let SPORTS_ROLE_ID_TEMP,
+    DUMBELL_ROLE_ID_TEMP = 'NO_ROLE';
+  let SPORT_NEW_ROLE, DUMBELL_NEW_ROLE;
 
-  // @TODO 두 NFT홀더에 대한 롤 부여
-  // if (10 > count && count >= 1) {
-  //   role = GlobalGuild.roles.cache.get(ROLE_ID_NFT);
-  //   ROLE_ID = ROLE_ID_NFT;
-  // } else if (100 > count && count >= 10) {
-  //   role = GlobalGuild.roles.cache.get(SUPER_ROLE_ID_NFT);
-  //   ROLE_ID = SUPER_ROLE_ID_NFT;
-  // } else if (count > 100) {
-  //   role = GlobalGuild.roles.cache.get(WHALE_ROLE_ID_NFT);
-  //   ROLE_ID = WHALE_ROLE_ID_NFT;
-  // }
+  // sports nft count에 따라 role부여
+  if (DIVIDE_NUMBER > sportsCount && sportsCount >= 1) {
+    SPORT_NEW_ROLE = GlobalGuild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
+    SPORTS_ROLE_ID_TEMP = 'SPORTS_FIGURE_ROLE_ID';
+  } else if (sportsCount >= DIVIDE_NUMBER) {
+    SPORT_NEW_ROLE = GlobalGuild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
+    SPORTS_ROLE_ID_TEMP = 'SUPER_SPORTS_FIGURE_ROLE_ID';
+  }
 
-  if (ROLE_ID !== previousRole) {
+  // dumbell nft count에 따라 role부여
+  if (DIVIDE_NUMBER > dumbellCount && dumbellCount >= 1) {
+    DUMBELL_NEW_ROLE = GlobalGuild.roles.cache.get(DUMBELL_ROLE_ID);
+    DUMBELL_ROLE_ID_TEMP = 'DUMBELL_ROLE_ID';
+  } else if (dumbellCount >= DIVIDE_NUMBER) {
+    DUMBELL_NEW_ROLE = GlobalGuild.roles.cache.get(SUPER_DUMBELL_ROLE_ID);
+    DUMBELL_ROLE_ID_TEMP = 'SUPER_DUMBELL_ROLE_ID';
+  }
+
+  if (SPORTS_ROLE_ID_TEMP !== sportsPreviousRole || DUMBELL_ROLE_ID_TEMP !== dumbellPreviousRole) {
     const member = await GlobalGuild.members.fetch(user_id);
 
     // 지울 롤이 있으면 삭제
-    if (previousRole !== 'NO_RULE') member.roles.remove(previousRole);
+    if (sportsPreviousRole !== 'NO_RULE') member.roles.remove(sportsPreviousRole);
+    if (dumbellPreviousRole !== 'NO_RULE') member.roles.remove(dumbellPreviousRole);
+
     // 추가할 롤이 있으면 추가
-    if (role) member?.roles.add(role);
+    if (SPORT_NEW_ROLE) member?.roles.add(SPORT_NEW_ROLE);
+    if (DUMBELL_NEW_ROLE) member?.roles.add(DUMBELL_NEW_ROLE);
 
-    const description = ROLE_ID === 'NO_ROLE' ? '홀더가 아닙니다' : `Role : ${ROLE_TEXT[ROLE_ID]}`;
-
+    const description =
+      SPORTS_ROLE_ID_TEMP === SPORTS_ROLE_ID_TEMP
+        ? `Role : ${ROLE_TEXT[SPORTS_ROLE_ID_TEMP]} , ${ROLE_TEXT[DUMBELL_ROLE_ID_TEMP]}`
+        : 'LILLIUS NFT 홀더가 아닙니다';
     const userEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
       .setTitle('Role이 변경되었습니다.')
       .setDescription(description)
       .addFields(
-        { name: '기존 NFT 보유량', value: previousCount.toString() },
-        { name: '현재 NFT 보유량', value: count.toString() },
+        { name: '기존 Sports Figure NFT 보유량', value: sportsPreviousCount.toString() },
+        { name: '현재 Sports Figure NFT 보유량', value: sportsCount.toString() },
+        { name: '기존 Dumbell NFT 보유량', value: dumbellPreviousCount.toString() },
+        { name: '현재 Dumbell NFT 보유량', value: dumbellCount.toString() },
       );
     user.send({ embeds: [userEmbed] }).then(() => {});
-    const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
-    console.log('[log] role update 완료', result);
-    return ROLE_ID;
+    // const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
+    // console.log('[log] role update 완료', result);
+    return { SPORTS_ROLE_ID: SPORTS_ROLE_ID_TEMP, DUMBELL_ROLE_ID: DUMBELL_ROLE_ID_TEMP };
   } else {
-    const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
-    console.log('[log] role update는 아니지만 db update 완료', result);
-    return ROLE_ID;
+    // const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
+    // console.log('[log] role update는 아니지만 db update 완료', result);
+    return { SPORTS_ROLE_ID: SPORTS_ROLE_ID_TEMP, DUMBELL_ROLE_ID: DUMBELL_ROLE_ID_TEMP };
   }
 };
 
