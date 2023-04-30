@@ -105,14 +105,14 @@ const Resolved = () => {
     // QRCodeModal.open(uri);
   };
 
-  useEffect(() => {
-    console.log('userId, address', userId, address);
-  }, [userId, address]);
+  // useEffect(() => {
+  //   console.log('userId, address', userId, address);
+  // }, [userId, address]);
 
   return (
     <>
       {/* 결과 Result 컴포넌트로 따로 빼기 ->  */}
-      {address ? (
+      {address && userId ? (
         <Result address={address} userId={userId} />
       ) : (
         <StBox>
@@ -120,7 +120,7 @@ const Resolved = () => {
             Click the Connect Wallet button below
             <br /> for holder authentication!
           </p>
-          <St.WalletButton className="absolute top-[64px]" onClick={handleWalletConnect}>
+          <St.WalletButton className="absolute top-[84px]" onClick={handleWalletConnect}>
             {/* Connect Kaikas Wallet */}
             <Web3Button />
           </St.WalletButton>
@@ -138,7 +138,7 @@ const StBox = styled.section`
   flex-direction: column;
   align-items: center;
   /* justify-content: space-between; */
-  margin-top: 240px;
+  margin-top: 320px;
   position: relative;
 `;
 

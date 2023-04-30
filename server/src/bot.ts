@@ -34,6 +34,7 @@ export const ROLE_TEXT = {
   // SUPER_ROLE_ID_NFT: 'Super Holder',
   // WHALE_ROLE_ID_NFT: 'Whale Holder',
 };
+
 export const DIVIDE_NUMBER = 30;
 
 export const client = new Client({
@@ -89,7 +90,6 @@ export const add_nft_role = async (
   dumbellNftCount: number,
 ) => {
   console.log('[log] add_nft_role user id', user_id);
-  
 
   const user = await client.users.fetch(user_id);
   const guild = client.guilds.cache.get(GUILD_ID);
@@ -97,7 +97,7 @@ export const add_nft_role = async (
 
   const holdingType = getHoldingType(sportsNftCount, dumbellNftCount);
 
-  console.log('[test] holdingType', holdingType)
+  console.log('[test] holdingType', holdingType);
 
   let role, member, userEmbed;
   switch (holdingType) {
@@ -116,13 +116,13 @@ export const add_nft_role = async (
 
       if (DIVIDE_NUMBER > sportsNftCount && sportsNftCount >= 1) {
         role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
-        ROLE_ID = SPORTS_FIGURE_ROLE_ID;
+        ROLE_ID = 'SPORTS_FIGURE_ROLE_ID';
       } else if (sportsNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
-        ROLE_ID = SUPER_SPORTS_FIGURE_ROLE_ID;
+        ROLE_ID = 'SUPER_SPORTS_FIGURE_ROLE_ID';
       }
       member = await guild.members.fetch(user_id);
-      console.log('[test] member까지는 잘 나오니', member)
+      console.log('[test] member까지는 잘 나오니', member);
       await member.roles.add(role);
       console.log('[log] add_nft_role new role', role);
       userEmbed = new EmbedBuilder()
@@ -139,10 +139,10 @@ export const add_nft_role = async (
       role = guild.roles.cache.get(DUMBELL_ROLE_ID);
       if (DIVIDE_NUMBER > dumbellNftCount && dumbellNftCount >= 1) {
         role = guild.roles.cache.get(DUMBELL_ROLE_ID);
-        ROLE_ID = DUMBELL_ROLE_ID;
+        ROLE_ID = 'DUMBELL_ROLE_ID';
       } else if (dumbellNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_DUMBELL_ROLE_ID);
-        ROLE_ID = SUPER_DUMBELL_ROLE_ID;
+        ROLE_ID = 'SUPER_DUMBELL_ROLE_ID';
       }
       member = await guild.members.fetch(user_id);
       member.roles.add(role);
@@ -155,29 +155,28 @@ export const add_nft_role = async (
 
       return { sportsRole: 'NO_ROLE', dumbellRole: ROLE_ID };
     default:
-      let sportsRole = SPORTS_FIGURE_ROLE_ID;
-      let dumbellRole = DUMBELL_ROLE_ID;
+      let sportsRole = 'SPORTS_FIGURE_ROLE_ID';
+      let dumbellRole = 'DUMBELL_ROLE_ID';
       if (DIVIDE_NUMBER > sportsNftCount && sportsNftCount >= 1) {
         role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
-        sportsRole = SPORTS_FIGURE_ROLE_ID;
+        sportsRole = 'SPORTS_FIGURE_ROLE_ID';
       } else if (sportsNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
-        sportsRole = SUPER_SPORTS_FIGURE_ROLE_ID;
+        sportsRole = 'SUPER_SPORTS_FIGURE_ROLE_ID';
       }
       member = await guild.members.fetch(user_id);
-      console.log('[test] member까지는 잘 나오니1', member)
+
       await member.roles.add(role);
-      console.log('[log] add_nft_role new role 1', role);
 
       if (DIVIDE_NUMBER > dumbellNftCount && dumbellNftCount >= 1) {
         role = guild.roles.cache.get(DUMBELL_ROLE_ID);
-        dumbellRole = DUMBELL_ROLE_ID;
+        dumbellRole = 'DUMBELL_ROLE_ID';
       } else if (dumbellNftCount >= DIVIDE_NUMBER) {
         role = guild.roles.cache.get(SUPER_DUMBELL_ROLE_ID);
-        dumbellRole = SUPER_DUMBELL_ROLE_ID;
+        dumbellRole = 'SUPER_DUMBELL_ROLE_ID';
       }
       member = await guild.members.fetch(user_id);
-      console.log('[test] member까지는 잘 나오니2', member)
+      
       await member.roles.add(role);
       console.log('[log] add_nft_role new role 2', role);
 
