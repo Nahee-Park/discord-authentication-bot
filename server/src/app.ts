@@ -67,6 +67,10 @@ app.get('*', handleHome);
  * @params code
  */
 
+app.get('/health', (req, res) => {
+  res.status(200).send('health check');
+});
+
 app.post('/user-token', async (request, response) => {
   try {
     const bodyData = new URLSearchParams({
