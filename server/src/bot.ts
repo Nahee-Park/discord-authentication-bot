@@ -9,20 +9,30 @@ dotenv.config();
 
 const token = process.env.TOKEN;
 // @TODO 서버 아이디
-// export const GUILD_ID = '1016405367053373490';
 export const GUILD_ID = '1096005938940481628';
+
+// REAL CHANNEL
+// export const GUILD_ID = '975661849154580520';
 
 // 롤을 부여할 테스트 멤버 아이디
 const MEMBER_ID = '753607553061093487';
 // @TODO 홀더 인증 채널 아이디
-// const CH_VERIFY = '1016692813984964671';
 const CH_VERIFY = '1096005938940481631';
+
+// REAL CHANNEL
+// const CH_VERIFY = '1098467887351595038';
 
 // NEW ROLE ID
 const SPORTS_FIGURE_ROLE_ID = '1096009423660515429';
 const SUPER_SPORTS_FIGURE_ROLE_ID = '1096257012582588436';
 const DUMBELL_ROLE_ID = '1096256540454957226';
 const SUPER_DUMBELL_ROLE_ID = '1096257307962261604';
+
+// REAL CHANNEL
+// const SPORTS_FIGURE_ROLE_ID = '1079668477851344926';
+// const SUPER_SPORTS_FIGURE_ROLE_ID = '1096250314602057738';
+// const DUMBELL_ROLE_ID = '1096251172681166929';
+// const SUPER_DUMBELL_ROLE_ID = '1096251502810628178';
 
 export const ROLE_TEXT = {
   NO_ROLE: '홀더가 아닙니다.',
@@ -35,6 +45,13 @@ export const ROLE_TEXT = {
   // WHALE_ROLE_ID_NFT: 'Whale Holder',
 };
 
+export const ROLE_ID_BY_TEXT = {
+  NO_ROLE: 'NO_ROLE',
+  SPORTS_FIGURE_ROLE_ID,
+  SUPER_SPORTS_FIGURE_ROLE_ID,
+  DUMBELL_ROLE_ID,
+  SUPER_DUMBELL_ROLE_ID,
+};
 export const DIVIDE_NUMBER = 30;
 
 export const client = new Client({
@@ -195,9 +212,9 @@ export const edit_nft_role = async (
   address: string,
   sportsCount: number,
   sportsPreviousCount: number,
+  sportsPreviousRole: string,
   dumbellCount: number,
   dumbellPreviousCount: number,
-  sportsPreviousRole: string,
   dumbellPreviousRole: string,
 ) => {
   console.log('[log] edit_nft_role user id', user_id);
@@ -216,8 +233,9 @@ export const edit_nft_role = async (
   } else if (sportsCount >= DIVIDE_NUMBER) {
     SPORT_NEW_ROLE = GlobalGuild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
     SPORTS_ROLE_ID_TEMP = 'SUPER_SPORTS_FIGURE_ROLE_ID';
+  } else if (sportsCount == 0) {
+    SPORTS_ROLE_ID_TEMP = 'NO_ROLE';
   }
-
   // dumbell nft count에 따라 role부여
   if (DIVIDE_NUMBER > dumbellCount && dumbellCount >= 1) {
     DUMBELL_NEW_ROLE = GlobalGuild.roles.cache.get(DUMBELL_ROLE_ID);
@@ -225,23 +243,36 @@ export const edit_nft_role = async (
   } else if (dumbellCount >= DIVIDE_NUMBER) {
     DUMBELL_NEW_ROLE = GlobalGuild.roles.cache.get(SUPER_DUMBELL_ROLE_ID);
     DUMBELL_ROLE_ID_TEMP = 'SUPER_DUMBELL_ROLE_ID';
+  } else if (dumbellCount == 0) {
+    DUMBELL_ROLE_ID_TEMP = 'NO_ROLE';
   }
 
+  // 달라진 게 있는지 점검
   if (SPORTS_ROLE_ID_TEMP !== sportsPreviousRole || DUMBELL_ROLE_ID_TEMP !== dumbellPreviousRole) {
     const member = await GlobalGuild.members.fetch(user_id);
 
     // 지울 롤이 있으면 삭제
-    if (sportsPreviousRole !== 'NO_RULE') member.roles.remove(sportsPreviousRole);
-    if (dumbellPreviousRole !== 'NO_RULE') member.roles.remove(dumbellPreviousRole);
+    if (sportsPreviousRole !== 'NO_ROLE') member.roles.remove(ROLE_ID_BY_TEXT[sportsPreviousRole]);
+    if (dumbellPreviousRole !== 'NO_ROLE')
+      member.roles.remove(ROLE_ID_BY_TEXT[dumbellPreviousRole]);
 
+    console.log('SPORT_NEW_ROLE', SPORT_NEW_ROLE);
+    console.log('DUMBELL_NEW_ROLE', DUMBELL_NEW_ROLE);
     // 추가할 롤이 있으면 추가
     if (SPORT_NEW_ROLE) member?.roles.add(SPORT_NEW_ROLE);
     if (DUMBELL_NEW_ROLE) member?.roles.add(DUMBELL_NEW_ROLE);
 
-    const description =
-      SPORTS_ROLE_ID_TEMP === SPORTS_ROLE_ID_TEMP
-        ? `Role : ${ROLE_TEXT[SPORTS_ROLE_ID_TEMP]} , ${ROLE_TEXT[DUMBELL_ROLE_ID_TEMP]}`
-        : 'LILLIUS NFT 홀더가 아닙니다';
+    let description = 'LILLIUS NFT 홀더가 아닙니다';
+    if (SPORT_NEW_ROLE && !DUMBELL_NEW_ROLE) {
+      description = `Role : ${ROLE_TEXT[SPORTS_ROLE_ID_TEMP]} , ${ROLE_TEXT[dumbellPreviousRole]}`;
+    }
+    if (!SPORT_NEW_ROLE && DUMBELL_NEW_ROLE) {
+      description = `Role : ${ROLE_TEXT[sportsPreviousRole]} , ${ROLE_TEXT[DUMBELL_ROLE_ID_TEMP]}`;
+    }
+    if (SPORT_NEW_ROLE && DUMBELL_NEW_ROLE) {
+      description = `Role : ${ROLE_TEXT[SPORTS_ROLE_ID_TEMP]} , ${ROLE_TEXT[DUMBELL_ROLE_ID_TEMP]}`;
+    }
+
     const userEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
       .setTitle('Role이 변경되었습니다.')
@@ -253,6 +284,7 @@ export const edit_nft_role = async (
         { name: '현재 Dumbell NFT 보유량', value: dumbellCount.toString() },
       );
     user.send({ embeds: [userEmbed] }).then(() => {});
+
     // const result = await userDB.createUser(clientDb, user_id, address, count, ROLE_ID);
     // console.log('[log] role update 완료', result);
     return { SPORTS_ROLE_ID: SPORTS_ROLE_ID_TEMP, DUMBELL_ROLE_ID: DUMBELL_ROLE_ID_TEMP };

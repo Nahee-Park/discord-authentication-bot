@@ -30,8 +30,8 @@ export const updateRole = async () => {
   const balanceObj = await allUser.reduce(async (promise, user) => {
     let result = await promise;
     result[user.userId] = {
-      sports: await sportsContract.balanceOf(user.address),
-      dumbell: await dumbellContract.balanceOf(user.address),
+      sports: Number(await sportsContract.balanceOf(user.address)),
+      dumbell: Number(await dumbellContract.balanceOf(user.address)),
     };
     return result;
   }, {});
@@ -41,17 +41,17 @@ export const updateRole = async () => {
   for (const [key, value] of Object.entries(balanceObj)) {
     if (cleanData[key].count !== Number(value)) {
       console.log('[log] update role  cleanData[key]', cleanData[key]);
-      console.log('[log] update role  value', value);
+
       const returnValue = await edit_nft_role(
         client,
         cleanData[key].userId,
         cleanData[key].address,
-        cleanData[key].sports,
-        cleanData[key].sportsNftCount,
-        cleanData[key].sportsRole,
-        cleanData[key].dumbell,
-        cleanData[key].dumbellNftCount,
-        cleanData[key].dumbellRole,
+        (value as any)?.sports, // sportsCount
+        cleanData[key].sportsNftCount, // sportsPreviousCount
+        cleanData[key].sportsRole, // sportsPreviousRole
+        (value as any)?.dumbell, // dumbellCount
+        cleanData[key].dumbellNftCount, // dumbellPreviousCount
+        cleanData[key].dumbellRole, // dumbellPreviousRole
       );
       console.log('[log] edit_nft_role return value', returnValue);
     }
