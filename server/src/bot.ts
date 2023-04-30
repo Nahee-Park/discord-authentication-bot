@@ -50,30 +50,30 @@ let GlobalGuild;
 
 // @TODO 한 번 불러온 이후 서버 재시작할 땐 주석처리하기
 client.on('ready', () => {
-  const ch = client.channels.cache.get(CH_VERIFY);
-  const row = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setLabel('Verify your assets!')
-      .setStyle(ButtonStyle.Link)
-      .setURL(process.env.URL),
-  );
-  const exampleEmbed = new EmbedBuilder()
-    .setColor(0x0099ff)
-    .setAuthor({
-      name: 'LILLIUS Holder Verification Bot',
-      iconURL: 'https://lillius.s3.ap-northeast-2.amazonaws.com/bot-favicon.png',
-    })
-    .setTitle('Verify your assets')
-    .setDescription(
-      'This is a read-only connection. Do not share your private keys. We will never ask for your seed phrase.',
-    )
-    .setThumbnail('https://lillius.s3.ap-northeast-2.amazonaws.com/bot-thumbnail.png')
-    // .setTimestamp()
-    .setFooter({
-      text: 'LILLIUS',
-      iconURL: 'https://lillius.s3.ap-northeast-2.amazonaws.com/bot-favicon.png',
-    });
-  ch.send({ embeds: [exampleEmbed], components: [row] }).then(() => {});
+  // const ch = client.channels.cache.get(CH_VERIFY);
+  // const row = new ActionRowBuilder().addComponents(
+  //   new ButtonBuilder()
+  //     .setLabel('Verify your assets!')
+  //     .setStyle(ButtonStyle.Link)
+  //     .setURL(process.env.URL),
+  // );
+  // const exampleEmbed = new EmbedBuilder()
+  //   .setColor(0x0099ff)
+  //   .setAuthor({
+  //     name: 'LILLIUS Holder Verification Bot',
+  //     iconURL: 'https://lillius.s3.ap-northeast-2.amazonaws.com/bot-favicon.png',
+  //   })
+  //   .setTitle('Verify your assets')
+  //   .setDescription(
+  //     'This is a read-only connection. Do not share your private keys. We will never ask for your seed phrase.',
+  //   )
+  //   .setThumbnail('https://lillius.s3.ap-northeast-2.amazonaws.com/bot-thumbnail.png')
+  //   // .setTimestamp()
+  //   .setFooter({
+  //     text: 'LILLIUS',
+  //     iconURL: 'https://lillius.s3.ap-northeast-2.amazonaws.com/bot-favicon.png',
+  //   });
+  // ch.send({ embeds: [exampleEmbed], components: [row] }).then(() => {});
 });
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');

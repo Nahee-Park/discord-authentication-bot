@@ -14,7 +14,7 @@ export const getUserToken = async () => {
   }
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
-  console.log('code>>>>>>>>>>>>>..', code);
+  // console.log('code>>>>>>>>>>>>>..', code);
   if (code === null) return;
 
   const oauthResult = await Api.post('/user-token', {

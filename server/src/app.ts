@@ -27,7 +27,9 @@ export const provider = new (ethers as any).providers.JsonRpcProvider(rpcURL);
 
 // @TODO Replace me
 export const SPORTS_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
-export const DUMBELL_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
+export const DUMBELL_CONTRACT_ADDR = '0x7Cd650Dc6d4147f5a2e97E18F5e21CF6Cbd071a7';
+
+
 let sportsContract,
   dumbellContract = null;
 
@@ -168,14 +170,15 @@ app.post('/api_wallet', async (request, response) => {
     throw new Error('지갑 주소 혹은 유저 아이디가 없습니다.');
   }
 
-  console.log('sportsContract', sportsContract);
+  
 
   // nft 갯수를 가져옴
-  // const sportsNftCount = await sportsContract?.balanceOf(addr);
-  // const dumbellNftCount = await dumbellContract?.balanceOf(addr);
+  const sportsNftCount = await sportsContract?.balanceOf(addr);
+  const dumbellNftCount = await dumbellContract?.balanceOf(addr);
 
-  const sportsNftCount = await sportsContract?.balanceOf(TEST_WALLET_ADDR2);
-  const dumbellNftCount = await dumbellContract?.balanceOf(TEST_WALLET_ADDR2);
+  // 실제 nft보유 계정 테스트용
+  // const sportsNftCount = await sportsContract?.balanceOf(TEST_WALLET_ADDR2);
+  // const dumbellNftCount = await dumbellContract?.balanceOf(TEST_WALLET_ADDR2);
 
   console.log('[log] user id', userId);
   console.log('[log] sportsNftCount count', sportsNftCount);
