@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const Api = axios.create({
-  baseURL: 'http://localhost:8000',
-  // baseURL: 'https://server.endolphin.link/',
+  // baseURL: 'http://localhost:8000',
+  baseURL: 'https://server.endolphin.link/',
   timeout: 6000,
 });
 
