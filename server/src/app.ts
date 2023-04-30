@@ -30,18 +30,18 @@ export const SPORTS_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251'
 export const DUMBELL_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
 let sportsContract,
   dumbellContract = null;
-const TEST_WALLET_ADDR = '0x72CD037aC70e68ec3d46F035b657Cd39203FF5a0';
+
+const TEST_WALLET_ADDR2 = '0xae77eb56ac9e72729697b72ddd6fb04ff444f01b'
 async function initContract() {
   sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
-  dumbellContract = new ethers.Contract(
-    DUMBELL_CONTRACT_ADDR,
-    nftContractInterface,
-    provider,
-  );
+  dumbellContract = new ethers.Contract(DUMBELL_CONTRACT_ADDR, nftContractInterface, provider);
   console.log('[log] initContract ok');
 
-  const testCount = await sportsContract.balanceOf(TEST_WALLET_ADDR);
-  console.log('balanceOf', testCount);
+  
+  const testCount2 = await sportsContract.balanceOf(TEST_WALLET_ADDR2);
+
+  
+  console.log('balanceOf2', Number(testCount2));
 }
 initContract();
 
@@ -78,8 +78,17 @@ app.post('/user-token', async (request, response) => {
       redirect_uri: REDIRECT_URL,
       scope: 'identify',
     });
+    console.log('bodyData>>>>>', {
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      code: request.body.code,
+      grant_type: 'authorization_code',
+      redirect_uri: REDIRECT_URL,
+      scope: 'identify',
+    });
 
     try {
+      // @TODO 여기서 반복적으로 가져오는 경우에 400에러 뜸 
       const responseResult = await axios.post('https://discord.com/api/oauth2/token', bodyData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -155,12 +164,18 @@ app.post('/api_wallet', async (request, response) => {
   const addr = request.body.address;
   const userId = request.body.userId;
 
+  if (!addr || !userId) {
+    throw new Error('지갑 주소 혹은 유저 아이디가 없습니다.');
+  }
+
   console.log('sportsContract', sportsContract);
 
   // nft 갯수를 가져옴
-  const sportsNftCount = await sportsContract?.balanceOf(addr);
-  const dumbellNftCount = await dumbellContract?.balanceOf(addr);
+  // const sportsNftCount = await sportsContract?.balanceOf(addr);
+  // const dumbellNftCount = await dumbellContract?.balanceOf(addr);
 
+  const sportsNftCount = await sportsContract?.balanceOf(TEST_WALLET_ADDR2);
+  const dumbellNftCount = await dumbellContract?.balanceOf(TEST_WALLET_ADDR2);
 
   console.log('[log] user id', userId);
   console.log('[log] sportsNftCount count', sportsNftCount);
@@ -188,8 +203,8 @@ app.post('/api_wallet', async (request, response) => {
   return response.json({
     code: 200,
     message: 'ok',
-    sportsNftCount : Number(sportsNftCount),
-    dumbellNftCount : Number(dumbellNftCount),
+    sportsNftCount: Number(sportsNftCount),
+    dumbellNftCount: Number(dumbellNftCount),
     sportsRole: ROLE_TEXT[sportsRole],
     dumbellRole: ROLE_TEXT[dumbellRole],
   });

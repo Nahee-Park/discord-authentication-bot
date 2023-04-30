@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const Api = axios.create({
-  // baseURL: 'http://localhost:8000',
-  baseURL: 'https://server.endolphin.link/',
-  timeout: 3000,
+  baseURL: 'http://localhost:8000',
+  // baseURL: 'https://server.endolphin.link/',
+  timeout: 6000,
 });
 
 let isGetToken = false;
@@ -14,6 +14,7 @@ export const getUserToken = async () => {
   }
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
+  console.log('code>>>>>>>>>>>>>..', code);
   if (code === null) return;
 
   const oauthResult = await Api.post('/user-token', {
@@ -46,6 +47,9 @@ export const getUserData = async () => {
 };
 
 export const connectDiscord = async (address: string, userId: string) => {
+  console.log('address>>>>>>>>>>>>>..', address);
+  console.log('userId>>>>>>>>>>>>>..', userId);
+  if (!address || !userId) return;
   const resultData = await Api.post('/api_wallet', {
     address,
     userId,

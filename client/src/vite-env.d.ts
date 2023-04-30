@@ -25,11 +25,13 @@ interface Klaytn {
 declare global {
   interface Window {
     klaytn: Klaytn;
+    ethereum: any;
   }
 }
 
 interface ImportMeta {
   env: {
     VITE_URL: string;
+    VITE_PROJECT_ID: string;
   };
 }

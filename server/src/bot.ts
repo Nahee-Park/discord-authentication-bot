@@ -89,6 +89,7 @@ export const add_nft_role = async (
   dumbellNftCount: number,
 ) => {
   console.log('[log] add_nft_role user id', user_id);
+  
 
   const user = await client.users.fetch(user_id);
   const guild = client.guilds.cache.get(GUILD_ID);
@@ -96,10 +97,13 @@ export const add_nft_role = async (
 
   const holdingType = getHoldingType(sportsNftCount, dumbellNftCount);
 
+  console.log('[test] holdingType', holdingType)
+
+  let role, member, userEmbed;
   switch (holdingType) {
     // NFT 개수가 0개인 경우
     case 'NO_ROLE':
-      let userEmbed = new EmbedBuilder()
+      userEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
         .setTitle('LILLIUS NFT 홀더 인증 완료')
         .setDescription('LILLIUS NFT 홀더가 아닙니다');
@@ -108,7 +112,7 @@ export const add_nft_role = async (
     // 스포츠 피규어 홀더
     case 'SPORTS_FIGURE_HOLDER':
       // 스포츠 피규어 홀더에 대한 롤 부여
-      let role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
+      role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
 
       if (DIVIDE_NUMBER > sportsNftCount && sportsNftCount >= 1) {
         role = guild.roles.cache.get(SPORTS_FIGURE_ROLE_ID);
@@ -117,8 +121,9 @@ export const add_nft_role = async (
         role = guild.roles.cache.get(SUPER_SPORTS_FIGURE_ROLE_ID);
         ROLE_ID = SUPER_SPORTS_FIGURE_ROLE_ID;
       }
-      let member = await guild.members.fetch(user_id);
-      member.roles.add(role);
+      member = await guild.members.fetch(user_id);
+      console.log('[test] member까지는 잘 나오니', member)
+      await member.roles.add(role);
       console.log('[log] add_nft_role new role', role);
       userEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
@@ -160,7 +165,9 @@ export const add_nft_role = async (
         sportsRole = SUPER_SPORTS_FIGURE_ROLE_ID;
       }
       member = await guild.members.fetch(user_id);
-      member.roles.add(role);
+      console.log('[test] member까지는 잘 나오니1', member)
+      await member.roles.add(role);
+      console.log('[log] add_nft_role new role 1', role);
 
       if (DIVIDE_NUMBER > dumbellNftCount && dumbellNftCount >= 1) {
         role = guild.roles.cache.get(DUMBELL_ROLE_ID);
@@ -170,7 +177,9 @@ export const add_nft_role = async (
         dumbellRole = SUPER_DUMBELL_ROLE_ID;
       }
       member = await guild.members.fetch(user_id);
-      member.roles.add(role);
+      console.log('[test] member까지는 잘 나오니2', member)
+      await member.roles.add(role);
+      console.log('[log] add_nft_role new role 2', role);
 
       userEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
