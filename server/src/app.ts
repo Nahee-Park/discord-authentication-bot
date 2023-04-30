@@ -19,8 +19,9 @@ export const nftContractInterface = [
   'function balanceOf(address _owner) view returns (uint256)',
 ];
 
-// const REDIRECT_URL = 'https://www.endolphin.link/';
-export const REDIRECT_URL = 'http://127.0.0.1:5173/';
+// export const REDIRECT_URL = 'https://www.endolphin.link/';
+export const REDIRECT_URL = 'https://main.dxl01j7nzkmcx.amplifyapp.com';
+// export const REDIRECT_URL = 'http://127.0.0.1:5173/';
 export const rpcURL = 'https://polygon-rpc.com';
 export const port = process.env.PORT;
 export const provider = new (ethers as any).providers.JsonRpcProvider(rpcURL);
