@@ -29,20 +29,17 @@ export const provider = new (ethers as any).providers.JsonRpcProvider(rpcURL);
 export const SPORTS_CONTRACT_ADDR = '0x81E62F370329F4cc84e2c381bA6EF61705085251';
 export const DUMBELL_CONTRACT_ADDR = '0x7Cd650Dc6d4147f5a2e97E18F5e21CF6Cbd071a7';
 
-
 let sportsContract,
   dumbellContract = null;
 
-const TEST_WALLET_ADDR2 = '0xae77eb56ac9e72729697b72ddd6fb04ff444f01b'
+const TEST_WALLET_ADDR2 = '0xae77eb56ac9e72729697b72ddd6fb04ff444f01b';
 async function initContract() {
   sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
   dumbellContract = new ethers.Contract(DUMBELL_CONTRACT_ADDR, nftContractInterface, provider);
   console.log('[log] initContract ok');
 
-  
   const testCount2 = await sportsContract.balanceOf(TEST_WALLET_ADDR2);
 
-  
   console.log('balanceOf2', Number(testCount2));
 }
 initContract();
@@ -90,7 +87,7 @@ app.post('/user-token', async (request, response) => {
     });
 
     try {
-      // @TODO 여기서 반복적으로 가져오는 경우에 400에러 뜸 
+      // @TODO 여기서 반복적으로 가져오는 경우에 400에러 뜸
       const responseResult = await axios.post('https://discord.com/api/oauth2/token', bodyData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -170,8 +167,6 @@ app.post('/api_wallet', async (request, response) => {
     throw new Error('지갑 주소 혹은 유저 아이디가 없습니다.');
   }
 
-  
-
   // nft 갯수를 가져옴
   const sportsNftCount = await sportsContract?.balanceOf(addr);
   const dumbellNftCount = await dumbellContract?.balanceOf(addr);
@@ -203,7 +198,6 @@ app.post('/api_wallet', async (request, response) => {
     dumbellRole,
   );
 
-
   return response.json({
     code: 200,
     message: 'ok',
@@ -221,3 +215,5 @@ const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
   console.log('[log] 낮 12시가 되어 role 재점검을 실시합니다');
   updateRole();
 });
+
+regularExec();

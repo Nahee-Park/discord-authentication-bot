@@ -27,6 +27,9 @@ import { useAccount, useContract, useSigner, useDisconnect } from 'wagmi';
 // 봇 불러오는 URL
 // https://discord.com/api/oauth2/authorize?client_id=1096241985519616120&permissions=8&scope=applications.commands%20bot
 
+// 봇 불러오는 URL WITH amplify
+// https://discord.com/api/oauth2/authorize?client_id=1096241985519616120&permissions=8&redirect_uri=https%3A%2F%2Fmain.dxl01j7nzkmcx.amplifyapp.com&response_type=code&scope=identify%20guilds%20bot
+
 function Auth() {
   return (
     <ErrorBoundary renderFallback={({ error, reset }) => <AuthModal error={error} reset={reset} />}>
