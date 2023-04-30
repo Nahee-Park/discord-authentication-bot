@@ -19,6 +19,8 @@ export const updateRole = async () => {
     cleanData[item.userId] = item;
   });
 
+  console.log('[log] cleanData', cleanData);
+
   const sportsContract = new ethers.Contract(SPORTS_CONTRACT_ADDR, nftContractInterface, provider);
   const dumbellContract = new ethers.Contract(
     DUMBELL_CONTRACT_ADDR,

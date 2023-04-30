@@ -215,6 +215,7 @@ app.post('/api_wallet', async (request, response) => {
 
 app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
 
+updateRole();
 const regularExec = schedule.scheduleJob('0 0 12 * * *', () => {
   // 매일 낮 12시 정각마다 실행
   console.log('[log] 낮 12시가 되어 role 재점검을 실시합니다');
