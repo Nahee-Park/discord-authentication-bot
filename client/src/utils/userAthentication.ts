@@ -47,13 +47,10 @@ export const getUserData = async () => {
 };
 
 export const connectDiscord = async (address: string, userId: string): Promise<any> => {
-  // console.log('>>>>>>>>>>>>>>>>>>>>address | userId', address, userId);
-  // if (!address || !userId) return new Promise((resolve) => {});
   const resultData = await Api.post('/api_wallet', {
     address,
     userId,
   });
-  console.log('>>>>>>>>>>>>>>>>>>>>aresultData', resultData);
 
   return resultData;
 };
